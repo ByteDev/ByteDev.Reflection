@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace ByteDev.Reflection.UnitTests
 {
     [TestFixture]
-    public class ReflectionPropertyExtensionsTest
+    public class ReflectionPropertyExtensionsTests
     {
         [TestFixture]
         public class GetPropertyValue
@@ -42,7 +42,7 @@ namespace ByteDev.Reflection.UnitTests
             [Test]
             public void WhenClassHasNoProperty_ThenThrowException()
             {
-                var sut = new ClassWithProperty();
+                var sut = typeof(ClassWithProperty);
 
                 Assert.Throws<InvalidOperationException>(() => sut.GetStaticPropertyValue<string>("Surname"));
             }
@@ -54,7 +54,8 @@ namespace ByteDev.Reflection.UnitTests
             [Test]
             public void WhenClassHasStaticProperty_ThenReturnValue()
             {
-                var sut = new ClassWithStaticProperty();
+                var sut = typeof(ClassWithStaticProperty);
+
                 ClassWithStaticProperty.Name = "John";
 
                 var result = sut.GetStaticPropertyValue<string>("Name");
@@ -65,7 +66,7 @@ namespace ByteDev.Reflection.UnitTests
             [Test]
             public void WhenClassHasNoStaticProperty_ThenThrowException()
             {
-                var sut = new ClassWithStaticProperty();
+                var sut = typeof(ClassWithStaticProperty);
 
                 Assert.Throws<InvalidOperationException>(() => sut.GetStaticPropertyValue<string>("Surname"));
             }

@@ -59,23 +59,6 @@ namespace ByteDev.Reflection
             return (TValue)propertyInfo.GetValue(null, null);
         }
 
-        /// <summary>
-        /// Retrieves a static property value as an object type using reflection.
-        /// </summary>
-        /// <typeparam name="TValue">Type of value to return.</typeparam>
-        /// <param name="source">Type that contains the property.</param>
-        /// <param name="propertyName">Name of the property.</param>
-        /// <returns>Property value for the corresponding property name.</returns>
-        /// <exception cref="T:System.InvalidOperationException"> when property with name <paramref name="propertyName" /> does not exist.</exception>
-        public static TValue GetStaticPropertyValue<TValue>(this object source, string propertyName)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            var type = source.GetType();
-            return GetStaticPropertyValue<TValue>(type, propertyName);
-        }
-
         public static PropertyInfo GetPropertyInfoOrThrow(this Type source, string propertyName)
         {
             if (source == null)
@@ -102,51 +85,6 @@ namespace ByteDev.Reflection
                 ExceptionThrower.ThrowPropertyDoesNotExist(source, propertyName);
             }
             return propertyInfo;
-        }
-
-        public static void SetProperty(this object source, string propertyName, object propertyValue, bool ignoreNameCase = false)
-        {
-            if(source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            if(string.IsNullOrEmpty(propertyName))
-                throw new ArgumentException("Property name was null or empty.", nameof(propertyName));
-
-            var pi = source.GetProperty(propertyName, ignoreNameCase);
-
-            if (pi != null && pi.CanWrite)
-            {
-                pi.SetValue(source, propertyValue, null);
-            }
-        }
-
-        public static void SetPropertyOrThrow(this object source, string propertyName, object propertyValue, bool ignoreNameCase = false)
-        {
-            if(source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (string.IsNullOrEmpty(propertyName))
-                throw new ArgumentException("Property name was null or empty.", nameof(propertyName));
-
-            var pi = source.GetProperty(propertyName, ignoreNameCase);
-
-            if(pi == null) 
-                ExceptionThrower.ThrowPropertyDoesNotExist(source.GetType(), propertyName);
-
-            if(pi.CanWrite) 
-                ExceptionThrower.ThrowPropertyIsNotWriteable(source.GetType(), propertyName);
-
-            pi.SetValue(source, propertyValue, null);
-        }
-
-        private static PropertyInfo GetProperty(this object source, string propertyName, bool ignoreNameCase)
-        {
-            if (ignoreNameCase)
-            {
-                return source.GetType().GetProperty(propertyName, BindingFlags.IgnoreCase);
-            }
-
-            return source.GetType().GetProperty(propertyName);
         }
     }
 }

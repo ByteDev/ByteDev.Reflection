@@ -5,10 +5,10 @@ using NUnit.Framework;
 namespace ByteDev.Reflection.UnitTests
 {
     [TestFixture]
-    public class ReflectionAttributeExtensionsTest
+    public class ReflectionAttributeExtensionsTests
     {
         [TestFixture]
-        public class HasAttribute_Type : ReflectionAttributeExtensionsTest
+        public class HasAttribute_Type : ReflectionAttributeExtensionsTests
         {
             [Test]
             public void WhenTypeIsNull_ThenThrowException()
@@ -48,7 +48,7 @@ namespace ByteDev.Reflection.UnitTests
         }
 
         [TestFixture]
-        public class HasAttribute_MemberInfo : ReflectionAttributeExtensionsTest
+        public class HasAttribute_MemberInfo : ReflectionAttributeExtensionsTests
         {
             [Test]
             public void WhenTypeIsNull_ThenThrowException()
@@ -77,36 +77,6 @@ namespace ByteDev.Reflection.UnitTests
             }
         }
 
-        [TestFixture]
-        public class HasAttribute_Object : ReflectionAttributeExtensionsTest
-        {
-            [Test]
-            public void WhenTypeIsNull_ThenThrowException()
-            {
-                Assert.Throws<ArgumentNullException>(() => (null as object).HasAttribute<UsedAttribute>());
-            }
-
-            [Test]
-            public void WhenObjectHasAttribute_ThenReturnTrue()
-            {
-                object sut = new DummyWithClassAttribute();
-
-                var result = sut.HasAttribute<UsedAttribute>();
-
-                Assert.That(result, Is.True);
-            }
-
-            [Test]
-            public void WhenObjectHasNoAttribute_ThenReturnFalse()
-            {
-                object sut = new DummyWithMethods();
-
-                var result = sut.HasAttribute<UsedAttribute>();
-
-                Assert.That(result, Is.False);
-            }
-        }
-        
         public class UsedAttribute : Attribute
         {
         }

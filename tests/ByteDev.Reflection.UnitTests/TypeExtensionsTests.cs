@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace ByteDev.Reflection.UnitTests
 {
     [TestFixture]
-    public class TypeExtensionsTest
+    public class TypeExtensionsTests
     {
         [TestFixture]
         public class GetConstants

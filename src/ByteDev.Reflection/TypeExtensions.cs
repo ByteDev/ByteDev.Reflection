@@ -8,7 +8,7 @@ namespace ByteDev.Reflection
     /// <summary>
     /// Extension methods for <see cref="T:System.Type" />.
     /// </summary>
-    public static class ReflectionFieldInfoExtensions
+    public static class TypeExtensions
     {
         /// <summary>
         /// Retrieve all constants on the type.
