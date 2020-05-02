@@ -46,6 +46,36 @@ namespace ByteDev.Reflection.UnitTests
             }
         }
 
+        [TestFixture]
+        public class HasAttribute_MemberInfo
+        {
+            [Test]
+            public void WhenTypeIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentNullException>(() => (null as MemberInfo).HasAttribute<UsedAttribute>());
+            }
+
+            [Test]
+            public void WhenMethodHasAttribute_ThenReturnTrue()
+            {
+                MethodInfo sut = typeof(DummyWithMethods).GetMethod("MethodWithAttribute");
+
+                var result = sut.HasAttribute<UsedAttribute>();
+
+                Assert.That(result, Is.True);
+            }
+
+            [Test]
+            public void WhenMethodDoesNotHaveAttribute_ThenReturnFalse()
+            {
+                MethodInfo sut = typeof(DummyWithMethods).GetMethod("MethodWithNoAttribute");
+
+                var result = sut.HasAttribute<UsedAttribute>();
+
+                Assert.That(result, Is.False);
+            }
+        }
+
         internal class Org
         {
             public string Ceo { get; set; }

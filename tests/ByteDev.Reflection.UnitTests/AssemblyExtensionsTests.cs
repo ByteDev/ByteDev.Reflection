@@ -98,17 +98,5 @@ namespace ByteDev.Reflection.UnitTests
                 Assert.That(result.Product, Is.EqualTo("ByteDev.Reflection.UnitTests"));
             }
         }
-
-        public class Car
-        {
-        }
-
-        public class Ford : Car
-        {
-        }
-
-        public class Fiat : Car
-        {
-        }
     }
 }
