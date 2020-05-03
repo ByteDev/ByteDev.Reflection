@@ -83,6 +83,7 @@ namespace ByteDev.Reflection
         /// <param name="source">The type to perform the operation on.</param>
         /// <param name="publicOnly">True returns only public constants; otherwise returns all constants.</param>
         /// <returns>Collection of FieldInfo on constants.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
         public static IEnumerable<FieldInfo> GetConstants(this Type source, bool publicOnly = false)
         {
             if(source == null)
@@ -112,19 +113,42 @@ namespace ByteDev.Reflection
         }
 
         /// <summary>
-        /// Indicates if a class is a test class. Determined by the class's
-        /// name suffix.
+        /// Retrieves the type's base types.
         /// </summary>
         /// <param name="source">The type to perform the operation on.</param>
-        /// <returns>True if the class is a test class; otherwise returns false.</returns>
-        public static bool IsTestClass(this Type source)
+        /// <returns>Collection of type's base types ending with System.Object.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        public static IList<Type> GetBaseTypes(this Type source)
+        {
+            if(source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            var list = new List<Type>();
+
+            var baseType = source.GetTypeInfo().BaseType;
+
+            while (baseType != null)
+            {
+                list.Add(baseType);
+
+                baseType = baseType.GetTypeInfo().BaseType;
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Retrieves the type's implemented interfaces.
+        /// </summary>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <returns>Collection of type's implemented interfaces.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        public static IEnumerable<Type> GetImplementedInterfaces(this Type source)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            var typeInfo = source.GetTypeInfo();
-
-            return typeInfo.IsClass && (typeInfo.Name.EndsWith("Tests") || typeInfo.Name.EndsWith("Test"));
+            return source.GetTypeInfo().ImplementedInterfaces;
         }
     }
 }

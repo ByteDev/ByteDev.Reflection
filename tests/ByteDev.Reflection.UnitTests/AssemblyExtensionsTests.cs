@@ -68,9 +68,10 @@ namespace ByteDev.Reflection.UnitTests
             {
                 var result = _sut.GetSubClasses<DummyWithProperties>().ToList();
 
-                Assert.That(result.Count, Is.EqualTo(2));
+                Assert.That(result.Count, Is.EqualTo(3));
                 Assert.That(result.First().Name, Is.EqualTo(typeof(DummyChild1).Name));
                 Assert.That(result.Second().Name, Is.EqualTo(typeof(DummyChild2).Name));
+                Assert.That(result.Third().Name, Is.EqualTo(typeof(DummyChildsChild1).Name));
             }
 
             [Test]

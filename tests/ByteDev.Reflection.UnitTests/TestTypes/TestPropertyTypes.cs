@@ -47,8 +47,32 @@
     {
     }
 
+    public class DummyChildsChild1 : DummyChild2
+    {
+    }
+
     public class DummyWithProperty
     {
         public string Name { get; set; }
+    }
+
+    public interface IDummyInterface0
+    {
+    }
+
+    public interface IDummyInterface1
+    {
+    }
+
+    public interface IDummyInterface2
+    {
+    }
+
+    public class DummyWithInterfaces1 : IDummyInterface1, IDummyInterface2
+    {
+    }
+
+    public class DummyWithInterfaces2 : DummyWithInterfaces1, IDummyInterface0
+    {
     }
 }

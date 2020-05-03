@@ -51,6 +51,8 @@ Type extensions:
 - GetStaticPropertyValue
 - GetConstants
 - GetConstantsValues
+- GetBaseTypes
+- GetImplementedInterfaces
 - IsTestClass
 
 MemberInfo extensions:

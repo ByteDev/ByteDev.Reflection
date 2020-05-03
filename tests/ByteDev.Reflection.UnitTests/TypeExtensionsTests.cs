@@ -10,58 +10,6 @@ namespace ByteDev.Reflection.UnitTests
     public class TypeExtensionsTests
     {
         [TestFixture]
-        public class TypeIsExtensionsTests
-        {
-            [TestFixture]
-            public class IsTestClass
-            {
-                [Test]
-                public void WhenTypeIsNull_ThenThrowException()
-                {
-                    Assert.Throws<ArgumentNullException>(() => TypeExtensions.IsTestClass(null));
-                }
-
-                [Test]
-                public void WhenTypeIsTestClass_ThenReturnTrue()
-                {
-                    var sut = typeof(TypeIsExtensionsTests);
-
-                    var result = sut.IsTestClass();
-
-                    Assert.That(result, Is.True);
-                }
-
-                [Test]
-                public void WhenTypeIsNotTestClass_ThenReturnFalse()
-                {
-                    var sut = typeof(Person);
-
-                    var result = sut.IsTestClass();
-
-                    Assert.That(result, Is.False);
-                }
-
-                [Test]
-                public void WhenTypeIsNotClass_ThenReturnFalse()
-                {
-                    var sut = typeof(PlaceTests);
-
-                    var result = sut.IsTestClass();
-
-                    Assert.That(result, Is.False);
-                }
-            }
-
-            internal class Person
-            {
-            }
-
-            internal struct PlaceTests
-            {
-            }
-        }
-
-        [TestFixture]
         public class HasAttribute
         {
             [Test]
@@ -372,6 +320,80 @@ namespace ByteDev.Reflection.UnitTests
                 Assert.That(result.Count, Is.EqualTo(2));
                 Assert.That(result.First(), Is.EqualTo("PublicValue1"));
                 Assert.That(result.Second(), Is.EqualTo("PublicValue2"));
+            }
+        }
+
+        [TestFixture]
+        public class GetBaseTypes
+        {
+            [Test]
+            public void WhenSourceIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentNullException>(() => TypeExtensions.GetBaseTypes(null));
+            }
+
+            [Test]
+            public void WhenTypeHasNoParent_ThenReturnObjectType()
+            {
+                var result = typeof(DummyWithProperty).GetBaseTypes();
+
+                Assert.That(result.Single().Name, Is.EqualTo("Object"));
+            }
+
+            [Test]
+            public void WhenTypeHasOwnParent_ThenReturnBaseType()
+            {
+                var result = typeof(DummyChildsChild1).GetBaseTypes();
+
+                Assert.That(result.Count, Is.EqualTo(3));
+                Assert.That(result.First().Name, Is.EqualTo("DummyChild2"));
+                Assert.That(result.Second().Name, Is.EqualTo("DummyWithProperties"));
+                Assert.That(result.Third().Name, Is.EqualTo("Object"));
+            }
+        }
+
+        [TestFixture]
+        public class GetImplementedInterfaces
+        {
+            [Test]
+            public void WhenSourceIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentNullException>(() => TypeExtensions.GetImplementedInterfaces(null));
+            }
+
+            [Test]
+            public void WhenTypeHasNoInterfaces_ThenReturnEmpty()
+            {
+                var sut = typeof(DummyWithProperty);
+
+                var result = sut.GetImplementedInterfaces();
+
+                Assert.That(result, Is.Empty);
+            }            
+            
+            [Test]
+            public void WhenTypeHasTwoInterfaces_ThenReturnInterfaces()
+            {
+                var sut = typeof(DummyWithInterfaces1);
+
+                var result = sut.GetImplementedInterfaces().ToList();
+
+                Assert.That(result.Count, Is.EqualTo(2));
+                Assert.That(result.First().Name, Is.EqualTo("IDummyInterface1"));
+                Assert.That(result.Second().Name, Is.EqualTo("IDummyInterface2"));
+            }
+
+            [Test]
+            public void WhenTypeHasBaseWithInterfaces_ThenReturnInterfaces()
+            {
+                var sut = typeof(DummyWithInterfaces2);
+
+                var result = sut.GetImplementedInterfaces().ToList();
+
+                Assert.That(result.Count, Is.EqualTo(3));
+                Assert.That(result.First().Name, Is.EqualTo("IDummyInterface1"));
+                Assert.That(result.Second().Name, Is.EqualTo("IDummyInterface2"));
+                Assert.That(result.Third().Name, Is.EqualTo("IDummyInterface0"));
             }
         }
     }
