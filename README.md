@@ -43,6 +43,7 @@ Object extensions:
 - GetPropertyValue
 - GetPropertyValue
 - SetProperty
+- SetReadOnlyProperty
 
 Type extensions:
 - HasAttribute

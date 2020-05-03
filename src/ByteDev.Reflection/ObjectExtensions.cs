@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace ByteDev.Reflection
 {
@@ -66,17 +67,18 @@ namespace ByteDev.Reflection
         }
 
         /// <summary>
-        /// Set an object's property using reflection.
+        /// Set an object's property using reflection. Properties that are read only
+        /// cannot be successfully set by this method.
         /// </summary>
         /// <param name="source">The object to set the property on.</param>
         /// <param name="propertyName">Property name.</param>
-        /// <param name="propertyValue">Property value.</param>
+        /// <param name="value">Property value.</param>
         /// <param name="ignoreCase">Ignore the case of the property.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
         /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
         /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
         /// <exception cref="T:System.InvalidOperationException">Property is not writable.</exception>
-        public static void SetProperty(this object source, string propertyName, object propertyValue, bool ignoreCase = false)
+        public static void SetProperty(this object source, string propertyName, object value, bool ignoreCase = false)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -89,7 +91,39 @@ namespace ByteDev.Reflection
             if (!pi.CanWrite)
                 ExceptionThrower.ThrowPropertyIsNotWriteable(source.GetType(), propertyName);
 
-            pi.SetValue(source, propertyValue, null);
+            pi.SetValue(source, value);
+        }
+
+        /// <summary>
+        /// Set an object's readonly property using reflection.
+        /// </summary>
+        /// <param name="source">The object to set the property on.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="value">Property value.</param>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
+        public static void SetReadOnlyProperty(this object source, string propertyName, object value)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (string.IsNullOrEmpty(propertyName))
+                throw new ArgumentException("Property name is null or empty.", nameof(propertyName));
+
+            var fieldInfo = GetBackingField(source.GetType(), propertyName);
+
+            if (fieldInfo == null)
+                ExceptionThrower.ThrowPropertyDoesNotExist(source.GetType(), propertyName);
+
+            fieldInfo.SetValue(source, value);
+        }
+
+        private static FieldInfo GetBackingField(Type type, string propertyName)
+        {
+            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+            return type.GetField("<" + propertyName + ">k__BackingField", flags);
         }
     }
 }

@@ -37,6 +37,9 @@
         public static string StaticPublicReadOnly { get; } = "Static Public read default value";
 
         public static string StaticPublicWritable { get; set; } = "Static Public writable default value";
+
+
+        public int PublicWritableInt { get; set; }
     }
 
     public class DummyChild1 : DummyWithProperties
@@ -53,7 +56,7 @@
 
     public class DummyWithProperty
     {
-        public string Name { get; set; }
+        public string PublicString { get; set; }
     }
 
     public interface IDummyInterface0

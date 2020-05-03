@@ -38,87 +38,6 @@ namespace ByteDev.Reflection.UnitTests
         }
 
         [TestFixture]
-        public class SetProperty
-        {
-            private const string Value = "Something";
-
-            [Test]
-            public void WhenSourceIsNull_ThenThrowException()
-            {
-                Assert.Throws<ArgumentNullException>(() => ObjectExtensions.SetProperty(null, "PrivateWritable", Value));
-            }
-
-            [Test]
-            public void WhenPropertyNameIsNull_ThenThrowException()
-            {
-                var sut = new DummyWithProperties();
-
-                Assert.Throws<ArgumentException>(() => sut.SetProperty(null, Value));
-            }
-
-            [Test]
-            public void WhenPropertyNameIsEmpty_ThenThrowException()
-            {
-                var sut = new DummyWithProperties();
-
-                Assert.Throws<ArgumentException>(() => sut.SetProperty(string.Empty, Value));
-            }
-
-            [Test]
-            public void WhenPropertyIsNotWritable_ThenThrowException()
-            {
-                var sut = new DummyWithProperties();
-
-                var ex = Assert.Throws<InvalidOperationException>(() => sut.SetProperty("PublicReadOnly", Value));
-                Assert.That(ex.Message, Is.EqualTo("Type: 'DummyWithProperties' property: 'PublicReadOnly' cannot be written to."));
-            }
-
-            [Test]
-            public void WhenPropertyIsPublicWritable_ThenSetProperty()
-            {
-                var sut = new DummyWithProperties();
-
-                sut.SetProperty("PublicWritable", Value);
-
-                Assert.That(sut.PublicWritable, Is.EqualTo(Value));
-            }
-
-            [Test]
-            public void WhenPropertyIsPublicWritable_AndIgnoreCase_ThenSetProperty()
-            {
-                var sut = new DummyWithProperties();
-
-                sut.SetProperty("publicwritable", Value, true);
-
-                Assert.That(sut.PublicWritable, Is.EqualTo(Value));
-            }
-
-            [Test]
-            public void WhenPropertyIsPrivateWritable_ThenSetProperty()
-            {
-                var sut = new DummyWithProperties();
-
-                sut.SetProperty("PrivateWritable", Value);
-
-                var actual = sut.GetPropertyValue<string>("PrivateWritable");
-
-                Assert.That(actual, Is.EqualTo(Value));
-            }
-
-            [Test]
-            public void WhenPropertyIsPrivateWritable_AndIgnoreCase_ThenSetProperty()
-            {
-                var sut = new DummyWithProperties();
-
-                sut.SetProperty("privatewritable", Value, true);
-
-                var actual = sut.GetPropertyValue<string>("privatewritable", true);
-
-                Assert.That(actual, Is.EqualTo(Value));
-            }
-        }
-
-        [TestFixture]
         public class GetPropertyValue_Object
         {
             private DummyWithProperties _sut;
@@ -167,13 +86,13 @@ namespace ByteDev.Reflection.UnitTests
             [Test]
             public void WhenPropertyIsComplexType_ThenReturnValue()
             {
-                var person = new DummyWithProperty { Name = "John" };
+                var person = new DummyWithProperty { PublicString = "John" };
 
                 _sut.DummyWithProperty = person;
 
-                var result = _sut.GetPropertyValue<string>("DummyWithProperty.Name");
+                var result = _sut.GetPropertyValue<string>("DummyWithProperty.PublicString");
 
-                Assert.That(result, Is.EqualTo(person.Name));
+                Assert.That(result, Is.EqualTo(person.PublicString));
             }
         }
 
@@ -232,13 +151,141 @@ namespace ByteDev.Reflection.UnitTests
             [Test]
             public void WhenPropertyIsComplexType_ThenReturnValue()
             {
-                var person = new DummyWithProperty { Name = "John" };
+                var person = new DummyWithProperty { PublicString = "John" };
 
                 _sut.DummyWithProperty = person;
 
-                var result = _sut.GetPropertyValue("DummyWithProperty.Name");
+                var result = _sut.GetPropertyValue("DummyWithProperty.PublicString");
 
-                Assert.That(result, Is.EqualTo(person.Name));
+                Assert.That(result, Is.EqualTo(person.PublicString));
+            }
+        }
+
+        [TestFixture]
+        public class SetProperty
+        {
+            private const string Value = "Something";
+
+            private DummyWithProperties _sut;
+
+            [SetUp]
+            public void SetUp()
+            {
+                _sut = new DummyWithProperties();
+            }
+
+            [Test]
+            public void WhenSourceIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentNullException>(() => ObjectExtensions.SetProperty(null, "PrivateWritable", Value));
+            }
+
+            [Test]
+            public void WhenPropertyNameIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentException>(() => _sut.SetProperty(null, Value));
+            }
+
+            [Test]
+            public void WhenPropertyNameIsEmpty_ThenThrowException()
+            {
+                Assert.Throws<ArgumentException>(() => _sut.SetProperty(string.Empty, Value));
+            }
+
+            [Test]
+            public void WhenPropertyDoesNotExist_ThenThrowException()
+            {
+                var ex = Assert.Throws<InvalidOperationException>(() => _sut.SetProperty("DoesntExist", Value));
+
+                Assert.That(ex.Message, Is.EqualTo("Type 'DummyWithProperties' has no property called 'DoesntExist'."));
+            }
+
+            [Test]
+            public void WhenPropertyIsNotWritable_ThenThrowException()
+            {
+                var ex = Assert.Throws<InvalidOperationException>(() => _sut.SetProperty("PublicReadOnly", Value));
+
+                Assert.That(ex.Message, Is.EqualTo("Type: 'DummyWithProperties' property: 'PublicReadOnly' cannot be written to."));
+            }
+
+            [TestCase("PublicWritable")]
+            [TestCase("PrivateWritable")]
+            public void WhenPropertyIsWritable_ThenSetProperty(string propertyName)
+            {
+                _sut.SetProperty(propertyName, Value);
+
+                var actual = _sut.GetPropertyValue<string>(propertyName);
+
+                Assert.That(actual, Is.EqualTo(Value));
+            }
+
+            [TestCase("PublicWritable")]
+            [TestCase("PrivateWritable")]
+            public void WhenPropertyIsWritable_AndIgnoreCase_ThenSetProperty(string propertyName)
+            {
+                _sut.SetProperty(propertyName.ToLower(), Value, true);
+
+                var actual = _sut.GetPropertyValue<string>(propertyName);
+
+                Assert.That(actual, Is.EqualTo(Value));
+            }
+
+            [Test]
+            public void WhenPropertyIsInt_ThenSetProperty()
+            {
+                _sut.SetProperty("PublicWritableInt", 1);
+
+                Assert.That(_sut.PublicWritableInt, Is.EqualTo(1));
+            }
+        }
+
+        [TestFixture]
+        public class SetReadOnlyProperty
+        {
+            private const string Value = "Something";
+
+            private DummyWithProperties _sut;
+
+            [SetUp]
+            public void SetUp()
+            {
+                _sut = new DummyWithProperties();
+            }
+
+            [Test]
+            public void WhenSourceIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentNullException>(() => ObjectExtensions.SetReadOnlyProperty(null, "PrivateReadOnly", Value));
+            }
+
+            [Test]
+            public void WhenPropertyNameIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentException>(() => _sut.SetReadOnlyProperty(null, Value));
+            }
+
+            [Test]
+            public void WhenPropertyNameIsEmpty_ThenThrowException()
+            {
+                Assert.Throws<ArgumentException>(() => _sut.SetReadOnlyProperty(string.Empty, Value));
+            }
+
+            [Test]
+            public void WhenPropertyDoesNotExist_ThenThrowException()
+            {
+                var ex = Assert.Throws<InvalidOperationException>(() => _sut.SetReadOnlyProperty("DoesntExist", Value));
+
+                Assert.That(ex.Message, Is.EqualTo("Type 'DummyWithProperties' has no property called 'DoesntExist'."));
+            }
+
+            [Test]
+            public void WhenPropertyIsReadOnly_ThenSetProperty()
+            {
+                _sut.SetReadOnlyProperty("PrivateReadOnly", Value);
+
+                var actual = _sut.GetPropertyValue<string>("PrivateReadOnly");
+
+                Assert.That(actual, Is.EqualTo(Value));
             }
         }
     }
