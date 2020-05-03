@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using ByteDev.Collections;
+using ByteDev.Reflection.UnitTests.TestTypes;
 using NUnit.Framework;
 
 namespace ByteDev.Reflection.UnitTests
@@ -59,23 +60,23 @@ namespace ByteDev.Reflection.UnitTests
             [Test]
             public void WhenIsNull_ThenThrowException()
             {
-                Assert.Throws<ArgumentNullException>(() => (null as Assembly).GetSubClasses<Car>());
+                Assert.Throws<ArgumentNullException>(() => (null as Assembly).GetSubClasses<DummyWithProperties>());
             }
 
             [Test]
             public void WhenTypeHasSubClasses_ThenReturnsSubClasses()
             {
-                var result = _sut.GetSubClasses<Car>().ToList();
+                var result = _sut.GetSubClasses<DummyWithProperties>().ToList();
 
                 Assert.That(result.Count, Is.EqualTo(2));
-                Assert.That(result.First().Name, Is.EqualTo(typeof(Ford).Name));
-                Assert.That(result.Second().Name, Is.EqualTo(typeof(Fiat).Name));
+                Assert.That(result.First().Name, Is.EqualTo(typeof(DummyChild1).Name));
+                Assert.That(result.Second().Name, Is.EqualTo(typeof(DummyChild2).Name));
             }
 
             [Test]
             public void WhenTypeHasNoSubClasses_ThenReturnsEmpty()
             {
-                var result = _sut.GetSubClasses<Ford>();
+                var result = _sut.GetSubClasses<DummyChild1>();
 
                 Assert.That(result, Is.Empty);
             }

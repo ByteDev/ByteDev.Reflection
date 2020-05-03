@@ -23,6 +23,49 @@ namespace ByteDev.Reflection
         }
 
         /// <summary>
+        /// Retrieves a property value using reflection.
+        /// </summary>
+        /// <typeparam name="TValue">Type of value to return.</typeparam>
+        /// <param name="source">Object that contains the property.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="ignoreCase">Ignore the case of the property.</param>
+        /// <returns>Property value; otherwise throws exception.</returns>
+        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
+        /// <exception cref="T:System.InvalidCastException">Property type is not of type <typeparamref name="TValue" />.</exception>
+        public static TValue GetPropertyValue<TValue>(this object source, string propertyName, bool ignoreCase = false)
+        {
+            var value = GetPropertyValue(source, propertyName, ignoreCase);
+
+            return (TValue)value;
+        }
+
+        /// <summary>
+        /// Retrieves a property value as a specified type using reflection.
+        /// </summary>
+        /// <param name="source">Object that contains the property.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="ignoreCase">Ignore the case of the property.</param>
+        /// <returns>Property value; otherwise throws exception.</returns>
+        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
+        public static object GetPropertyValue(this object source, string propertyName, bool ignoreCase = false)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (string.IsNullOrEmpty(propertyName))
+                throw new ArgumentException("Property name is null or empty.", nameof(propertyName));
+
+            foreach (var name in propertyName.Split('.'))
+            {
+                var pi = source.GetType().GetPropertyOrThrow(name, ignoreCase);
+
+                source = pi.GetValue(source, null);
+            }
+
+            return source;
+        }
+
+        /// <summary>
         /// Set an object's property using reflection.
         /// </summary>
         /// <param name="source">The object to set the property on.</param>
@@ -47,49 +90,6 @@ namespace ByteDev.Reflection
                 ExceptionThrower.ThrowPropertyIsNotWriteable(source.GetType(), propertyName);
 
             pi.SetValue(source, propertyValue, null);
-        }
-
-        /// <summary>
-        /// Retrieves a property value using reflection.
-        /// </summary>
-        /// <typeparam name="TValue">Type of value to return.</typeparam>
-        /// <param name="source">Object that contains the property.</param>
-        /// <param name="propertyName">Property name.</param>
-        /// <param name="ignoreCase">Ignore the case of the property.</param>
-        /// <returns>Property value; otherwise throws exception.</returns>
-        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
-        /// <exception cref="T:System.InvalidCastException">Property type is not of type <typeparamref name="TValue" />.</exception>
-        public static TValue GetPropertyValue<TValue>(this object source, string propertyName, bool ignoreCase = false)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            var value = GetPropertyValue(source, propertyName, ignoreCase);
-
-            return (TValue)value;
-        }
-
-        /// <summary>
-        /// Retrieves a property value as a specified type using reflection.
-        /// </summary>
-        /// <param name="source">Object that contains the property.</param>
-        /// <param name="propertyName">Property name.</param>
-        /// <param name="ignoreCase">Ignore the case of the property.</param>
-        /// <returns>Property value; otherwise throws exception.</returns>
-        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
-        public static object GetPropertyValue(this object source, string propertyName, bool ignoreCase = false)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            foreach (var name in propertyName.Split('.'))
-            {
-                var pi = source.GetType().GetPropertyOrThrow(name, ignoreCase);
-
-                source = pi.GetValue(source, null);
-            }
-
-            return source;
         }
     }
 }

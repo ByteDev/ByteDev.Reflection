@@ -32,11 +32,27 @@ The repo can be cloned from git bash:
 
 To use any extension methods simply reference the `ByteDev.Reflection` namespace.
 
-AssemblyExtensions:
+Assembly extensions:
 - GetVersion
 - GetFileVersion
 - GetSubClasses
 - GetAssemblyAttribute
 
+Object extensions:
+- HasAttribute
+- GetPropertyValue
+- GetPropertyValue
+- SetProperty
 
+Type extensions:
+- HasAttribute
+- GetPropertyOrThrow
+- GetStaticPropertyOrThrow
+- GetStaticPropertyValue
+- GetConstants
+- GetConstantsValues
+- IsTestClass
 
+MemberInfo extensions:
+- HasAttribute
+- GetAttribute

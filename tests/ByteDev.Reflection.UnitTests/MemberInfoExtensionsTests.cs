@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using ByteDev.Reflection.UnitTests.TestTypes;
 using NUnit.Framework;
 
 namespace ByteDev.Reflection.UnitTests
@@ -9,58 +10,20 @@ namespace ByteDev.Reflection.UnitTests
     public class MemberInfoExtensionsTests
     {
         [TestFixture]
-        public class GetAttribute
-        {
-            [Test]
-            public void WhenIsNull_ThenThrowException()
-            {
-                Assert.Throws<ArgumentNullException>(() => MemberInfoExtensions.GetAttribute<PersonAttribute>(null));
-            }
-
-            [Test]
-            public void WhenMemberHasAttribute_ThenReturnAttribute()
-            {
-                MemberInfo sut = typeof(Company).GetMember("Ceo").Single();
-
-                var result = sut.GetAttribute<PersonAttribute>();
-
-                Assert.That(result.Name, Is.EqualTo("John Smith"));
-            }
-
-            [Test]
-            public void WhenMemberDoesNotHaveAttribute_ThenReturnNull()
-            {
-                MemberInfo sut = typeof(Org).GetMember("Ceo").Single();
-
-                var result = sut.GetAttribute<PersonAttribute>();
-
-                Assert.That(result, Is.Null);
-            }
-
-            [Test]
-            public void WhenMemberHasMultipleOfAttribute_ThenThrowException()
-            {
-                MemberInfo sut = typeof(CompanyMultiCeo).GetMember("Ceo").Single();
-
-                Assert.Throws<InvalidOperationException>(() => sut.GetAttribute<PersonAttribute>());
-            }
-        }
-
-        [TestFixture]
-        public class HasAttribute_MemberInfo
+        public class HasAttribute
         {
             [Test]
             public void WhenTypeIsNull_ThenThrowException()
             {
-                Assert.Throws<ArgumentNullException>(() => (null as MemberInfo).HasAttribute<UsedAttribute>());
+                Assert.Throws<ArgumentNullException>(() => MemberInfoExtensions.HasAttribute<UsedMethodAttribute>(null));
             }
 
             [Test]
             public void WhenMethodHasAttribute_ThenReturnTrue()
             {
-                MethodInfo sut = typeof(DummyWithMethods).GetMethod("MethodWithAttribute");
+                var sut = typeof(DummyWithMethods).GetMethod("MethodWithAttribute");
 
-                var result = sut.HasAttribute<UsedAttribute>();
+                var result = sut.HasAttribute<UsedMethodAttribute>();
 
                 Assert.That(result, Is.True);
             }
@@ -68,40 +31,69 @@ namespace ByteDev.Reflection.UnitTests
             [Test]
             public void WhenMethodDoesNotHaveAttribute_ThenReturnFalse()
             {
-                MethodInfo sut = typeof(DummyWithMethods).GetMethod("MethodWithNoAttribute");
+                var sut = typeof(DummyWithMethods).GetMethod("MethodWithNoAttribute");
 
-                var result = sut.HasAttribute<UsedAttribute>();
+                var result = sut.HasAttribute<UsedMethodAttribute>();
+
+                Assert.That(result, Is.False);
+            }
+
+            [Test]
+            public void WhenTypeHasAttribute_ThenReturnTrue()
+            {
+                var sut = typeof(DummyWithClassAttribute);
+
+                var result = sut.HasAttribute<UsedClassAttribute>();
+
+                Assert.That(result, Is.True);
+            }
+
+            [Test]
+            public void WhenTypeDoesNotHaveAttribute_ThenReturnFalse()
+            {
+                var sut = typeof(DummyWithClassAttribute);
+
+                var result = sut.HasAttribute<NotUsedAttribute>();
 
                 Assert.That(result, Is.False);
             }
         }
 
-        internal class Org
+        [TestFixture]
+        public class GetAttribute
         {
-            public string Ceo { get; set; }
-        }
-
-        internal class Company
-        {
-            [Person("John Smith")]
-            public string Ceo { get; set; }
-        }
-
-        internal class CompanyMultiCeo
-        {
-            [Person("John Smith")]
-            [Person("Joe Bloggs")]
-            public string Ceo { get; set; }
-        }
-
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-        internal sealed class PersonAttribute : Attribute
-        {
-            public string Name { get; set; }
-
-            public PersonAttribute(string name)
+            [Test]
+            public void WhenIsNull_ThenThrowException()
             {
-                Name = name;
+                Assert.Throws<ArgumentNullException>(() => MemberInfoExtensions.GetAttribute<UsedMethodAttribute>(null));
+            }
+
+            [Test]
+            public void WhenMethodHasAttribute_ThenReturnAttribute()
+            {
+                MemberInfo sut = typeof(DummyWithMethods).GetMember("MethodWithAttribute").Single();
+
+                var result = sut.GetAttribute<UsedMethodAttribute>();
+
+                Assert.That(result.Name, Is.EqualTo("John Smith"));
+            }
+
+            [Test]
+            public void WhenMethodDoesNotHaveAttribute_ThenReturnNull()
+            {
+                MemberInfo sut = typeof(DummyWithMethods).GetMember("MethodWithNoAttribute").Single();
+
+                var result = sut.GetAttribute<UsedMethodAttribute>();
+
+                Assert.That(result, Is.Null);
+            }
+
+            [Test]
+            public void WhenMemberHasMultipleOfAttribute_ThenThrowException()
+            {
+                MemberInfo sut = typeof(DummyWithMethods).GetMember("MethodWithMultiAttribute").Single();
+
+                Assert.Throws<InvalidOperationException>(() => sut.GetAttribute<UsedMethodAttribute>());
             }
         }
     }

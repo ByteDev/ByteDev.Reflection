@@ -11,7 +11,22 @@ namespace ByteDev.Reflection
     public static class TypeExtensions
     {
         /// <summary>
-        /// Get a type's property.
+        /// Determines whether type has attribute applied.
+        /// </summary>
+        /// <typeparam name="TAttribute">Type of attribute to check for.</typeparam>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <returns>True if <paramref name="source" /> has the attribute <typeparamref name="TAttribute" />; otherwise returns false.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        public static bool HasAttribute<TAttribute>(this Type source) where TAttribute : Attribute
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.GetAttribute<TAttribute>() != null;
+        }
+
+        /// <summary>
+        /// Retrieves a type's property regardless of its access modifier.
         /// </summary>
         /// <param name="source">The type to perform the operation on.</param>
         /// <param name="propertyName">Property name.</param>
@@ -24,21 +39,36 @@ namespace ByteDev.Reflection
         {
             const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-            return GetPropertyInfo(source, propertyName, ignoreCase, flags);
+            return PropertyInfoHelper.GetPropertyInfo(source, propertyName, ignoreCase, flags);
         }
 
+        /// <summary>
+        /// Retrieves a type's static property.
+        /// </summary>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="ignoreCase">Ignore the case of the property.</param>
+        /// <returns>PropertyInfo if it exists; otherwise throws exception.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
+        public static PropertyInfo GetStaticPropertyOrThrow(this Type source, string propertyName, bool ignoreCase = false)
+        {
+            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-
-
+            return PropertyInfoHelper.GetPropertyInfo(source, propertyName, ignoreCase, flags);
+        }
 
         /// <summary>
-        /// Retrieves a static property value using reflection.
+        /// Retrieves a type's static property value using reflection.
         /// </summary>
         /// <typeparam name="TValue">Type of value to return.</typeparam>
-        /// <param name="source">Type that contains the property.</param>
-        /// <param name="propertyName">Name of the property.</param>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <param name="propertyName">Property name.</param>
         /// <param name="ignoreCase">Ignore the case of the property.</param>
         /// <returns>Property value for the corresponding property name.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
         /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
         public static TValue GetStaticPropertyValue<TValue>(this Type source, string propertyName, bool ignoreCase = false)
         {
@@ -47,77 +77,54 @@ namespace ByteDev.Reflection
             return (TValue)pi.GetValue(null, null);
         }
 
-        public static PropertyInfo GetStaticPropertyOrThrow(this Type source, string propertyName, bool ignoreCase = false)
-        {
-            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-
-            return GetPropertyInfo(source, propertyName, ignoreCase, flags);
-        }
-
-
-
-
-
-
-
         /// <summary>
-        /// Retrieve all constants on the type.
+        /// Retrieves all constants on the type.
         /// </summary>
         /// <param name="source">The type to perform the operation on.</param>
-        /// <returns>Collection of info on constants.</returns>
-        public static IEnumerable<FieldInfo> GetConstants(this Type source)
+        /// <param name="publicOnly">True returns only public constants; otherwise returns all constants.</param>
+        /// <returns>Collection of FieldInfo on constants.</returns>
+        public static IEnumerable<FieldInfo> GetConstants(this Type source, bool publicOnly = false)
         {
-            var fieldInfos = source.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+            if(source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            var flags = publicOnly ? 
+                BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy :
+                BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic;
+
+            var fieldInfos = source.GetFields(flags);
 
             return fieldInfos.Where(fi => fi.IsLiteral && !fi.IsInitOnly);
         }
 
         /// <summary>
-        /// Retrieve all values of constants on the type. Restricted to constants of the same type.
+        /// Retrieves all constant values on the type. Restricted to constants of the same type.
         /// </summary>
         /// <typeparam name="TValue">Type of constant values.</typeparam>
         /// <param name="source">The type to perform the operation on.</param>
+        /// <param name="publicOnly">True returns only public constants; otherwise returns all constants.</param>
         /// <returns>Collection of constant values.</returns>
-        public static IEnumerable<TValue> GetConstantsValues<TValue>(this Type source) where TValue : class
+        public static IEnumerable<TValue> GetConstantsValues<TValue>(this Type source, bool publicOnly = false) where TValue : class
         {
-            var fieldInfos = GetConstants(source);
+            var fieldInfos = GetConstants(source, publicOnly);
 
             return fieldInfos.Select(fi => fi.GetRawConstantValue() as TValue);
         }
 
         /// <summary>
-        /// Checks whether <paramref name="source" /> has attribute <typeparamref name="TAttribute" />.
+        /// Indicates if a class is a test class. Determined by the class's
+        /// name suffix.
         /// </summary>
-        /// <typeparam name="TAttribute">Type of attribute to check for.</typeparam>
-        /// <param name="source">The type to check whether has the attribute.</param>
-        /// <returns>True if <paramref name="source" /> has the attribute <typeparamref name="TAttribute" />; otherwise returns false.</returns>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
-        public static bool HasAttribute<TAttribute>(this Type source) where TAttribute : Attribute
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <returns>True if the class is a test class; otherwise returns false.</returns>
+        public static bool IsTestClass(this Type source)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            return source.GetAttribute<TAttribute>() != null;
-        }
+            var typeInfo = source.GetTypeInfo();
 
-
-
-        internal static PropertyInfo GetPropertyInfo(Type source, string propertyName, bool ignoreCase, BindingFlags flags)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (string.IsNullOrEmpty(propertyName))
-                throw new ArgumentException("Property name is null or empty.", nameof(propertyName));
-
-            var pi = ignoreCase ?
-                source.GetProperty(propertyName, flags | BindingFlags.IgnoreCase) :
-                source.GetProperty(propertyName, flags);
-
-            if (pi == null)
-                ExceptionThrower.ThrowPropertyDoesNotExist(source, propertyName);
-
-            return pi;
+            return typeInfo.IsClass && (typeInfo.Name.EndsWith("Tests") || typeInfo.Name.EndsWith("Test"));
         }
     }
 }
