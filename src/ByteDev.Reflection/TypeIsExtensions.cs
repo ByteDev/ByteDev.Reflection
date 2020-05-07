@@ -40,11 +40,11 @@ namespace ByteDev.Reflection
 
             var typeNamespace = source.Namespace ?? string.Empty;
 
-            if (@namespace.Length > typeNamespace.Length)
-                return false;
-
             if (@namespace == typeNamespace)
                 return true;
+
+            if (@namespace.Length > typeNamespace.Length)
+                return false;
 
             var typeSubNamespace = typeNamespace.Substring(0, @namespace.Length);
 

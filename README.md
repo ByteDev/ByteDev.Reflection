@@ -60,3 +60,6 @@ Type extensions:
 MemberInfo extensions:
 - HasAttribute
 - GetAttribute
+
+Generic extensions:
+- InvokeMethod
