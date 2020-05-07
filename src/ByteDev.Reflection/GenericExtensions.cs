@@ -3,6 +3,9 @@ using System.Reflection;
 
 namespace ByteDev.Reflection
 {
+    /// <summary>
+    /// Extension methods for generic types.
+    /// </summary>
     public static class GenericExtensions
     {
         /// <summary>
