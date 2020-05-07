@@ -15,6 +15,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{51818C51-6
 		docs\RELEASE-NOTES.md = docs\RELEASE-NOTES.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{19040C1B-C084-415A-8CC5-31AA8BC26D2E}"
+	ProjectSection(SolutionItems) = preProject
+		build\build.cake = build\build.cake
+		build\ByteDev.Reflection.nuspec = build\ByteDev.Reflection.nuspec
+		build\ByteDev.Utilities.cake = build\ByteDev.Utilities.cake
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

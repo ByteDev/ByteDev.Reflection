@@ -6,10 +6,10 @@
     <version>0.0.1</version>
     <authors>Paul Stanley</authors>
     <owners>Paul Stanley</owners>
-    <copyright>Copyright 2019</copyright>
+    <copyright>Copyright 2020</copyright>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Set of reflection related extension methods in a .NET Standard assembly.</description>
-    <tags>reflection standard</tags>
+    <tags>reflection extensions assembly type method property field class object propertyinfo memberinfo</tags>
     <iconUrl>https://raw.githubusercontent.com/bytedev/ByteDev.Reflection/master/images/icon.png</iconUrl>
     <dependencies>
       <group targetFramework=".NETStandard2.0" />
