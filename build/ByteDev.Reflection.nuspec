@@ -10,7 +10,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Set of reflection related extension methods in a .NET Standard assembly.</description>
     <tags>reflection extensions assembly type method property field class object propertyinfo memberinfo</tags>
-    <iconUrl>https://raw.githubusercontent.com/bytedev/ByteDev.Reflection/master/images/icon.png</iconUrl>
+    <icon>images\icon.png</icon>
     <dependencies>
       <group targetFramework=".NETStandard2.0" />
     </dependencies>
@@ -18,5 +18,6 @@
   <files>
     <file src="..\src\ByteDev.Reflection\bin\Release\netstandard2.0\ByteDev.Reflection.dll" target="lib\netstandard2.0" />
     <file src="..\src\ByteDev.Reflection\bin\Release\netstandard2.0\ByteDev.Reflection.xml" target="lib\netstandard2.0" />
+    <file src="..\images\icon.png" target="images\" />
   </files>
 </package>
