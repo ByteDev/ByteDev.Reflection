@@ -54,6 +54,7 @@ Type extensions:
 - GetConstantsValues
 - GetBaseTypes
 - GetImplementedInterfaces
+- IsInNamespace
 - IsTestClass
 
 MemberInfo extensions:
