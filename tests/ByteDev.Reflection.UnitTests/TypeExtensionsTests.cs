@@ -396,5 +396,87 @@ namespace ByteDev.Reflection.UnitTests
                 Assert.That(result.Third().Name, Is.EqualTo("IDummyInterface0"));
             }
         }
+
+        [TestFixture]
+        public class GetPropertiesWithAttribute
+        {
+            [Test]
+            public void WhenSourceIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentNullException>(() => TypeExtensions.GetPropertiesWithAttribute<UsedPropertyAttribute>(null));
+            }
+
+            [Test]
+            public void WhenNoPropertiesHaveAttribute_ThenReturnEmpty()
+            {
+                var result = typeof(DummyWithPropertyAttributes).GetPropertiesWithAttribute<NotUsedAttribute>();
+
+                Assert.That(result, Is.Empty);
+            }
+
+            [Test]
+            public void WhenPropertiesHaveAttribute_ThenReturnProperties()
+            {
+                var result = typeof(DummyWithPropertyAttributes).GetPropertiesWithAttribute<UsedPropertyAttribute>().ToList();
+
+                Assert.That(result.Count, Is.EqualTo(2));
+                Assert.That(result.First().Name, Is.EqualTo("Property1"));
+                Assert.That(result.Second().Name, Is.EqualTo("Property3"));
+            }
+        }
+
+        [TestFixture]
+        public class GetEnumProperties
+        {
+            [Test]
+            public void WhenSourceIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentNullException>(() => TypeExtensions.GetEnumProperties(null));
+            }
+
+            [Test]
+            public void WhenHasNoEnumProperties_ThenReturnEmpty()
+            {
+                var result = typeof(DummyWithNoEnumProperties).GetEnumProperties();
+
+                Assert.That(result, Is.Empty);
+            }
+
+            [Test]
+            public void WhenHasEnumProperties_ThenReturnProperties()
+            {
+                var result = typeof(DummyWithEnumProperties).GetEnumProperties().ToList();
+
+                Assert.That(result.Count, Is.EqualTo(2));
+                Assert.That(result.First().Name, Is.EqualTo("Property1"));
+                Assert.That(result.Second().Name, Is.EqualTo("Property2"));
+            }
+        }
+
+        [TestFixture]
+        public class GetPropertiesOfType
+        {
+            [Test]
+            public void WhenSourceIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentNullException>(() => TypeExtensions.GetPropertiesOfType(null, typeof(string)));
+            }
+
+            [Test]
+            public void WhenHasNoPropertiesOfType_ThenReturnEmpty()
+            {
+                var result = typeof(DummyWithProperties).GetPropertiesOfType(typeof(decimal));
+
+                Assert.That(result, Is.Empty);
+            }
+
+            [Test]
+            public void WhenHasPropertiesOfType_ThenReturnProperties()
+            {
+                var result = typeof(DummyWithProperties).GetPropertiesOfType(typeof(int));
+
+                Assert.That(result.Count(), Is.EqualTo(1));
+            }
+        }
     }
 }

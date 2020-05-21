@@ -150,5 +150,55 @@ namespace ByteDev.Reflection
 
             return source.GetTypeInfo().ImplementedInterfaces;
         }
+
+        /// <summary>
+        /// Retrieves all the properties on the type that have a certain attribute.
+        /// </summary>
+        /// <typeparam name="TAttribute">Property attribute.</typeparam>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <returns>Collection of properties that have the attribute.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        public static IEnumerable<PropertyInfo> GetPropertiesWithAttribute<TAttribute>(this Type source) where TAttribute : Attribute
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source
+                .GetProperties()
+                .Where(pi => pi.GetCustomAttributes(typeof(TAttribute), false).Length > 0);
+        }
+
+        /// <summary>
+        /// Retrieves all the enum properties on the type.
+        /// </summary>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <returns>Collection of properties of enum type.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        public static IEnumerable<PropertyInfo> GetEnumProperties(this Type source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source
+                .GetProperties()
+                .Where(pi => pi.PropertyType.IsEnum);
+        }
+
+        /// <summary>
+        /// Retrieves all the properties on a type with a certain type.
+        /// </summary>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <param name="type">Property type.</param>
+        /// <returns>Collection of properties.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        public static IEnumerable<PropertyInfo> GetPropertiesOfType(this Type source, Type type)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source
+                .GetProperties()
+                .Where(pi => pi.PropertyType == type);
+        }
     }
 }

@@ -48,6 +48,9 @@ Object extensions:
 Type extensions:
 - HasAttribute
 - GetPropertyOrThrow
+- GetPropertiesWithAttribute
+- GetPropertiesOfType
+- GetEnumProperties
 - GetStaticPropertyOrThrow
 - GetStaticPropertyValue
 - GetConstants

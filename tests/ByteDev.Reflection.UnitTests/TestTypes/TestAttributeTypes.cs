@@ -17,6 +17,11 @@ namespace ByteDev.Reflection.UnitTests.TestTypes
         }
     }
 
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class UsedPropertyAttribute : Attribute
+    {
+    }
+
     public sealed class UsedClassAttribute : Attribute
     {
     }
@@ -46,5 +51,16 @@ namespace ByteDev.Reflection.UnitTests.TestTypes
     [UsedClass]
     public class DummyWithClassAttribute
     {
+    }
+
+    public class DummyWithPropertyAttributes
+    {
+        [UsedProperty]
+        public string Property1 { get; set; }
+
+        public string Property2 { get; set; }
+
+        [UsedProperty]
+        public string Property3 { get; set; }
     }
 }
