@@ -200,32 +200,5 @@ namespace ByteDev.Reflection
                 .GetProperties()
                 .Where(pi => pi.PropertyType == type);
         }
-
-
-        public static T ConstructNonPublic<T>(this Type source)
-        {
-            return ConstructNonPublic<T>(source, new Type[0], new object[0]);
-        }
-
-        public static T ConstructNonPublic<T>(this Type source, Type[] paramTypes, object[] paramObjects)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (paramTypes == null)
-                throw new ArgumentNullException(nameof(paramTypes));
-
-            if (paramObjects == null)
-                throw new ArgumentNullException(nameof(paramObjects));
-
-            var constructorInfo = source.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, paramTypes, null);
-
-            if (constructorInfo == null)
-                throw new InvalidOperationException("No matching constructor could be found.");
-
-            var obj = constructorInfo.Invoke(paramObjects);
-
-            return (T)obj;
-        }
     }
 }
