@@ -9,6 +9,7 @@ New features:
 - Added TypeExtensions.GetPropertiesWithAttribute
 - Added TypeExtensions.GetEnumProperties
 - Added TypeExtensions.GetPropertiesOfType
+- Added TypeExtensions.ConstructNonPublic
 
 Bug fixes:
 - (None)

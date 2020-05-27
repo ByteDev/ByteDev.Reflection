@@ -478,5 +478,89 @@ namespace ByteDev.Reflection.UnitTests
                 Assert.That(result.Count(), Is.EqualTo(1));
             }
         }
+
+        [TestFixture]
+        public class ConstructNonPublic
+        {
+            [Test]
+            public void WhenSourceIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentNullException>(() => TypeExtensions.ConstructNonPublic<TestClassPrivateConstructor>(null));
+            }
+
+            [Test]
+            public void WhenParamTypesIsNull_ThenThrowException()
+            {
+                var sut = typeof(TestClassPrivateConstructor);
+
+                Assert.Throws<ArgumentNullException>(() => sut.ConstructNonPublic<TestClassPrivateConstructor>(null, new object[0]));
+            }
+
+            [Test]
+            public void WhenParamObjectsIsNull_ThenThrowException()
+            {
+                var sut = typeof(TestClassPrivateConstructor);
+
+                Assert.Throws<ArgumentNullException>(() => sut.ConstructNonPublic<TestClassPrivateConstructor>(new Type[0], null));
+            }
+
+            [Test]
+            public void WhenNoMatchingContructorFound_ThenThrowException()
+            {
+                var sut = typeof(TestClassPrivateConstructor);
+
+                Assert.Throws<InvalidOperationException>(() => sut.ConstructNonPublic<TestClassPrivateConstructor>(new[] {typeof(string)}, new object[] {"Hello world"}));
+            }
+
+            [Test]
+            public void WhenHasPrivateConstructor_ThenReturnInstance()
+            {
+                var sut = typeof(TestClassPrivateConstructor);
+
+                var result = sut.ConstructNonPublic<TestClassPrivateConstructor>();
+
+                Assert.That(result.One, Is.EqualTo(1));
+            }            
+            
+            [Test]
+            public void WhenHasPrivateProtectedConstructor_ThenReturnInstance()
+            {
+                var sut = typeof(TestClassPrivateProtectedConstructor);
+
+                var result = sut.ConstructNonPublic<TestClassPrivateProtectedConstructor>();
+
+                Assert.That(result.One, Is.EqualTo(1));
+            }
+
+            [Test]
+            public void WhenHasProtectedConstructor_ThenReturnInstance()
+            {
+                var sut = typeof(TestClassProtectedConstructor);
+
+                var result = sut.ConstructNonPublic<TestClassProtectedConstructor>();
+
+                Assert.That(result.One, Is.EqualTo(1));
+            }            
+            
+            [Test]
+            public void WhenHasInternalConstructor_ThenReturnInstance()
+            {
+                var sut = typeof(TestClassInternalConstructor);
+
+                var result = sut.ConstructNonPublic<TestClassInternalConstructor>();
+
+                Assert.That(result.One, Is.EqualTo(1));
+            }            
+            
+            [Test]
+            public void WhenHasInternalConstructor_WithParam_ThenReturnInstance()
+            {
+                var sut = typeof(TestClassInternalWithParamConstructor);
+
+                var result = sut.ConstructNonPublic<TestClassInternalWithParamConstructor>(new[] { typeof(int) }, new object[] { 10 });
+
+                Assert.That(result.Value, Is.EqualTo(10));
+            }
+        }
     }
 }
