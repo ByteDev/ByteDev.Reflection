@@ -30,7 +30,7 @@ The repo can be cloned from git bash:
 
 ## Usage
 
-To use any extension methods simply reference the `ByteDev.Reflection` namespace.
+To use any extension methods or type simply reference the `ByteDev.Reflection` namespace.
 
 Assembly extensions:
 - GetVersion
@@ -66,3 +66,6 @@ MemberInfo extensions:
 
 Generic extensions:
 - InvokeMethod
+
+ObjectConstruction
+- ConstructNonPublic
