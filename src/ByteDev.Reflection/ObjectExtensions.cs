@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace ByteDev.Reflection
@@ -53,7 +54,7 @@ namespace ByteDev.Reflection
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (string.IsNullOrEmpty(propertyName))
+            if (String.IsNullOrEmpty(propertyName))
                 throw new ArgumentException("Property name is null or empty.", nameof(propertyName));
 
             foreach (var name in propertyName.Split('.'))
@@ -83,7 +84,7 @@ namespace ByteDev.Reflection
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (string.IsNullOrEmpty(propertyName))
+            if (String.IsNullOrEmpty(propertyName))
                 throw new ArgumentException("Property name is null or empty.", nameof(propertyName));
 
             var pi = source.GetType().GetPropertyOrThrow(propertyName, ignoreCase);
@@ -108,7 +109,7 @@ namespace ByteDev.Reflection
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (string.IsNullOrEmpty(propertyName))
+            if (String.IsNullOrEmpty(propertyName))
                 throw new ArgumentException("Property name is null or empty.", nameof(propertyName));
 
             var fieldInfo = GetBackingField(source.GetType(), propertyName);
@@ -117,6 +118,29 @@ namespace ByteDev.Reflection
                 ExceptionThrower.ThrowPropertyDoesNotExist(source.GetType(), propertyName);
 
             fieldInfo.SetValue(source, value);
+        }
+
+        /// <summary>
+        /// Returns an object's properties as a dictionary of property name values.
+        /// </summary>
+        /// <param name="source">The collection to perform the operation on.</param>
+        /// <param name="bindingFlags">Binding flags used to select the properties.</param>
+        /// <returns>Dictionary of property name values.</returns>
+        public static IDictionary<string, object> GetPropertiesAsDictionary(this object source, BindingFlags bindingFlags)
+        {
+            var dict = new Dictionary<string, object>();
+
+            if (source == null)
+                return dict;
+
+            var properties = source.GetType().GetProperties(bindingFlags);
+
+            foreach (var property in properties)
+            {
+                dict.Add(property.Name, property.GetValue(source));
+            }
+
+            return dict;
         }
 
         private static FieldInfo GetBackingField(Type type, string propertyName)

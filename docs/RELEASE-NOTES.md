@@ -1,6 +1,17 @@
 # Release Notes
 
-## 1.1.0 - ?? May 2020
+## 1.2.0 - ?? June 2020
+
+Breaking changes:
+- (None)
+
+New features:
+- Added ObjectExtensions.GetPropertiesAsDictionary
+
+Bug fixes:
+- (None)
+
+## 1.1.0 - 27 May 2020
 
 Breaking changes:
 - (None)

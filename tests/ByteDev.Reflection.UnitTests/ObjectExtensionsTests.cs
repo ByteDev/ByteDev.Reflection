@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using ByteDev.Reflection.UnitTests.TestTypes;
 using NUnit.Framework;
 
@@ -286,6 +287,30 @@ namespace ByteDev.Reflection.UnitTests
                 var actual = _sut.GetPropertyValue<string>("PrivateReadOnly");
 
                 Assert.That(actual, Is.EqualTo(Value));
+            }
+        }
+
+        [TestFixture]
+        public class GetPropertiesAsDictionary
+        {
+            [Test]
+            public void WhenSourceIsNull_ThenReturnEmpty()
+            {
+                var result = (null as TestPerson).GetPropertiesAsDictionary(BindingFlags.Instance | BindingFlags.Public);
+
+                Assert.That(result, Is.Empty);
+            }
+
+            [Test]
+            public void WhenSourcePropertiesSet_ThenReturnDictionary()
+            {
+                var sut = new TestPerson {Name = "John", Age = 50};
+
+                var result = sut.GetPropertiesAsDictionary(BindingFlags.Instance | BindingFlags.Public);
+
+                Assert.That(result.Count, Is.EqualTo(2));
+                Assert.That(result["Name"], Is.EqualTo("John"));
+                Assert.That(result["Age"], Is.EqualTo(50));
             }
         }
     }
