@@ -10,21 +10,6 @@ namespace ByteDev.Reflection
     public static class ObjectExtensions
     {    
         /// <summary>
-        /// Checks whether <paramref name="source" /> has attribute <typeparamref name="TAttribute" />.
-        /// </summary>
-        /// <typeparam name="TAttribute">Type of attribute to check for.</typeparam>
-        /// <param name="source">The object to check whether has the attribute.</param>
-        /// <returns>True if <paramref name="source" /> has the attribute <typeparamref name="TAttribute" />; otherwise returns false.</returns>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
-        public static bool HasAttribute<TAttribute>(this object source) where TAttribute : Attribute
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            return source.GetType().GetAttribute<TAttribute>() != null;
-        }
-
-        /// <summary>
         /// Retrieves a property value using reflection.
         /// </summary>
         /// <typeparam name="TValue">Type of value to return.</typeparam>
@@ -54,7 +39,7 @@ namespace ByteDev.Reflection
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (String.IsNullOrEmpty(propertyName))
+            if (string.IsNullOrEmpty(propertyName))
                 throw new ArgumentException("Property name is null or empty.", nameof(propertyName));
 
             foreach (var name in propertyName.Split('.'))
@@ -65,59 +50,6 @@ namespace ByteDev.Reflection
             }
 
             return source;
-        }
-
-        /// <summary>
-        /// Set an object's property using reflection. Properties that are read only
-        /// cannot be successfully set by this method.
-        /// </summary>
-        /// <param name="source">The object to set the property on.</param>
-        /// <param name="propertyName">Property name.</param>
-        /// <param name="value">Property value.</param>
-        /// <param name="ignoreCase">Ignore the case of the property.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
-        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
-        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
-        /// <exception cref="T:System.InvalidOperationException">Property is not writable.</exception>
-        public static void SetProperty(this object source, string propertyName, object value, bool ignoreCase = false)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (String.IsNullOrEmpty(propertyName))
-                throw new ArgumentException("Property name is null or empty.", nameof(propertyName));
-
-            var pi = source.GetType().GetPropertyOrThrow(propertyName, ignoreCase);
-
-            if (!pi.CanWrite)
-                ExceptionThrower.ThrowPropertyIsNotWriteable(source.GetType(), propertyName);
-
-            pi.SetValue(source, value);
-        }
-
-        /// <summary>
-        /// Set an object's readonly property using reflection.
-        /// </summary>
-        /// <param name="source">The object to set the property on.</param>
-        /// <param name="propertyName">Property name.</param>
-        /// <param name="value">Property value.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
-        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
-        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
-        public static void SetReadOnlyProperty(this object source, string propertyName, object value)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (String.IsNullOrEmpty(propertyName))
-                throw new ArgumentException("Property name is null or empty.", nameof(propertyName));
-
-            var fieldInfo = GetBackingField(source.GetType(), propertyName);
-
-            if (fieldInfo == null)
-                ExceptionThrower.ThrowPropertyDoesNotExist(source.GetType(), propertyName);
-
-            fieldInfo.SetValue(source, value);
         }
 
         /// <summary>
@@ -143,11 +75,129 @@ namespace ByteDev.Reflection
             return dict;
         }
 
-        private static FieldInfo GetBackingField(Type type, string propertyName)
+        /// <summary>
+        /// Set an object's readonly property value using reflection.
+        /// </summary>
+        /// <param name="source">The object to set the property on.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="value">Property value.</param>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
+        public static void SetPropertyReadOnlyValue(this object source, string propertyName, object value)
         {
-            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
 
-            return type.GetField("<" + propertyName + ">k__BackingField", flags);
+            if (string.IsNullOrEmpty(propertyName))
+                throw new ArgumentException("Property name is null or empty.", nameof(propertyName));
+
+            var fieldInfo = source.GetType().GetBackingField(propertyName);
+
+            if (fieldInfo == null)
+                ExceptionThrower.ThrowPropertyDoesNotExist(source.GetType(), propertyName);
+
+            fieldInfo.SetValue(source, value);
+        }
+
+        /// <summary>
+        /// Set an object's property value using reflection. If <paramref name="value" /> is
+        /// not of the same type as the property then a type conversion is attempted.
+        /// </summary>
+        /// <param name="source">The object to set the property on.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="value">Property value.</param>
+        /// <param name="ignoreCase">Ignore the case of the property name.</param>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
+        public static void SetPropertyValue(this object source, string propertyName, object value, bool ignoreCase = false)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            var pi = source.GetType().GetPropertyOrThrow(propertyName, ignoreCase);
+
+            SetPropertyValue(source, pi, value);
+        }
+
+        /// <summary>
+        /// Set an object's property value using reflection. If <paramref name="value" /> is
+        /// not of the same type as the property then a type conversion is attempted.
+        /// </summary>
+        /// <param name="source">The object to set the property on.</param>
+        /// <param name="pi">Property name.</param>
+        /// <param name="value">Property value.</param>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="pi" /> is null.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Property's type cannot be set to null.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Property is not writable.</exception>
+        public static void SetPropertyValue(this object source, PropertyInfo pi, object value)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (pi == null)
+                throw new ArgumentNullException(nameof(pi));
+
+            if (!pi.CanWrite)
+                ExceptionThrower.ThrowPropertyIsNotWriteable(source.GetType(), pi.Name);
+
+            if (value == null)
+            {
+                if (pi.PropertyType.IsNullable())
+                    pi.SetValue(source, null);
+                else
+                    throw new InvalidOperationException($"Property's type '{pi.PropertyType}' cannot be set to null.");
+            }
+
+            else if (pi.PropertyType == value.GetType())
+                pi.SetValue(source, value);
+
+            else if (pi.PropertyType == typeof(string))
+                pi.SetValue(source, value.ToString());
+
+            else if (pi.PropertyType == typeof(bool))
+                pi.SetValue(source, Convert.ToBoolean(value));
+
+            else if (pi.PropertyType == typeof(char))
+                pi.SetValue(source, Convert.ToChar(value));
+
+            else if (pi.PropertyType == typeof(long))
+                pi.SetValue(source, Convert.ToInt64(value));
+
+            else if (pi.PropertyType == typeof(int))
+                pi.SetValue(source, Convert.ToInt32(value));
+
+            else if (pi.PropertyType == typeof(short))
+                pi.SetValue(source, Convert.ToInt16(value));
+
+            else if (pi.PropertyType == typeof(byte))
+                pi.SetValue(source, Convert.ToByte(value));
+
+            else if (pi.PropertyType == typeof(decimal))
+                pi.SetValue(source, Convert.ToDecimal(value));
+
+            else if (pi.PropertyType == typeof(double))
+                pi.SetValue(source, Convert.ToDouble(value));
+
+            else if (pi.PropertyType == typeof(float))
+                pi.SetValue(source, Convert.ToSingle(value));
+            
+            else if (pi.PropertyType == typeof(ulong))
+                pi.SetValue(source, Convert.ToUInt64(value));
+
+            else if (pi.PropertyType == typeof(uint))
+                pi.SetValue(source, Convert.ToUInt32(value));  
+            
+            else if (pi.PropertyType == typeof(ushort))
+                pi.SetValue(source, Convert.ToUInt16(value));
+
+            else if (pi.PropertyType == typeof(sbyte))
+                pi.SetValue(source, Convert.ToSByte(value));
+
+            else
+                pi.SetValue(source, value);
         }
     }
 }

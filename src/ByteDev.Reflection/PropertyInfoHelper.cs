@@ -5,7 +5,7 @@ namespace ByteDev.Reflection
 {
     internal static class PropertyInfoHelper
     {
-        public static PropertyInfo GetPropertyInfo(Type source, string propertyName, bool ignoreCase, BindingFlags flags)
+        public static PropertyInfo GetPropertyInfoOrThrow(Type source, string propertyName, bool ignoreCase, BindingFlags flags)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));

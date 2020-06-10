@@ -39,7 +39,7 @@ namespace ByteDev.Reflection
         {
             const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-            return PropertyInfoHelper.GetPropertyInfo(source, propertyName, ignoreCase, flags);
+            return PropertyInfoHelper.GetPropertyInfoOrThrow(source, propertyName, ignoreCase, flags);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace ByteDev.Reflection
         {
             const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-            return PropertyInfoHelper.GetPropertyInfo(source, propertyName, ignoreCase, flags);
+            return PropertyInfoHelper.GetPropertyInfoOrThrow(source, propertyName, ignoreCase, flags);
         }
 
         /// <summary>
@@ -199,6 +199,32 @@ namespace ByteDev.Reflection
             return source
                 .GetProperties()
                 .Where(pi => pi.PropertyType == type);
+        }
+
+        /// <summary>
+        /// Indicates if a type can be set to null.
+        /// </summary>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <returns>True the type can be set to null; otherwise returns false.</returns>
+        public static bool IsNullable(this Type source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (!source.IsValueType)
+                return true;
+
+            return Nullable.GetUnderlyingType(source) != null;
+        }
+
+        internal static FieldInfo GetBackingField(this Type source, string propertyName)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+            return source.GetField("<" + propertyName + ">k__BackingField", flags);
         }
     }
 }

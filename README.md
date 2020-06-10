@@ -39,12 +39,11 @@ Assembly extensions:
 - GetAssemblyAttribute
 
 Object extensions:
-- HasAttribute
-- GetPropertyValue
+- GetPropertyValue<T>
 - GetPropertyValue
 - GetPropertiesAsDictionary
-- SetProperty
-- SetReadOnlyProperty
+- SetPropertyReadOnlyValue
+- SetPropertyValue
 
 Type extensions:
 - HasAttribute
@@ -59,6 +58,7 @@ Type extensions:
 - GetBaseTypes
 - GetImplementedInterfaces
 - IsInNamespace
+- IsNullable
 - IsTestClass
 
 MemberInfo extensions:

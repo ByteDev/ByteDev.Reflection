@@ -1,12 +1,17 @@
 # Release Notes
 
-## 1.2.0 - ?? June 2020
+## 2.0.0 - 10 June 2020
 
 Breaking changes:
-- (None)
+- Removed ObjectExtensions.HasAttribute (use TypeExtensions.HasAttribute)
+- ObjectExtensions.SetValue is now SetPropertyValue
+- ObjectExtensions.SetReadOnlyProperty is now SetPropertyReadOnlyValue
+- ObjectExtensions.SetPropertyValue now tries to handle type conversion to property type if required
 
 New features:
 - Added ObjectExtensions.GetPropertiesAsDictionary
+- Added ObjectExtensions.SetPropertyValue overload for PropertyInfo
+- Added TypeExtensions.IsNullable
 
 Bug fixes:
 - (None)
