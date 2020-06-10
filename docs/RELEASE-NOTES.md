@@ -1,5 +1,16 @@
 # Release Notes
 
+## 2.1.0 - 10 June 2020
+
+Breaking changes:
+- (None)
+
+New features:
+- Added TypeExtensions.GetPropertiesWithAttribute overload for BindingFlags
+
+Bug fixes:
+- (None)
+
 ## 2.0.0 - 10 June 2020
 
 Breaking changes:

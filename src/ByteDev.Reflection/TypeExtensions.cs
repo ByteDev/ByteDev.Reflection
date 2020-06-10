@@ -151,6 +151,7 @@ namespace ByteDev.Reflection
             return source.GetTypeInfo().ImplementedInterfaces;
         }
 
+
         /// <summary>
         /// Retrieves all the properties on the type that have a certain attribute.
         /// </summary>
@@ -160,12 +161,25 @@ namespace ByteDev.Reflection
         /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
         public static IEnumerable<PropertyInfo> GetPropertiesWithAttribute<TAttribute>(this Type source) where TAttribute : Attribute
         {
+            return GetPropertiesWithAttribute<TAttribute>(source, default);
+        }
+
+        /// <summary>
+        /// Retrieves all the properties on the type that have a certain attribute.
+        /// </summary>
+        /// <typeparam name="TAttribute">Property attribute.</typeparam>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <param name="bindingFlags">Property binding flags to filter on.</param>
+        /// <returns>Collection of properties that have the attribute.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        public static IEnumerable<PropertyInfo> GetPropertiesWithAttribute<TAttribute>(this Type source, BindingFlags bindingFlags) where TAttribute : Attribute
+        {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            return source
-                .GetProperties()
-                .Where(pi => pi.GetCustomAttributes(typeof(TAttribute), false).Length > 0);
+            var properties = bindingFlags == default ? source.GetProperties() : source.GetProperties(bindingFlags);
+
+            return properties.Where(pi => pi.GetCustomAttributes(typeof(TAttribute), false).Length > 0);
         }
 
         /// <summary>

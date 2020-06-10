@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using ByteDev.Collections;
 using ByteDev.Reflection.UnitTests.TestTypes;
 using NUnit.Framework;
@@ -418,6 +419,24 @@ namespace ByteDev.Reflection.UnitTests
             public void WhenPropertiesHaveAttribute_ThenReturnProperties()
             {
                 var result = typeof(DummyWithPropertyAttributes).GetPropertiesWithAttribute<UsedPropertyAttribute>().ToList();
+
+                Assert.That(result.Count, Is.EqualTo(2));
+                Assert.That(result.First().Name, Is.EqualTo("Property1"));
+                Assert.That(result.Second().Name, Is.EqualTo("Property3"));
+            }
+
+            [Test]
+            public void WhenUsingBindingFlagsThatFilterAllPropertiesOut_ThenReturnEmpty()
+            {
+                var result = typeof(DummyWithPropertyAttributes).GetPropertiesWithAttribute<UsedPropertyAttribute>(BindingFlags.NonPublic);
+
+                Assert.That(result, Is.Empty);
+            }
+
+            [Test]
+            public void WhenUsingBindingFlagsThatFilterPropertiesThatExist_ThenReturnProperties()
+            {
+                var result = typeof(DummyWithPropertyAttributes).GetPropertiesWithAttribute<UsedPropertyAttribute>(BindingFlags.Instance | BindingFlags.Public).ToList();
 
                 Assert.That(result.Count, Is.EqualTo(2));
                 Assert.That(result.First().Name, Is.EqualTo("Property1"));
