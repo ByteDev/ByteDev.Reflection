@@ -9,27 +9,11 @@ namespace ByteDev.Reflection
     public static class TypeIsExtensions
     {
         /// <summary>
-        /// Indicates if a type is a test class. Determined by the class's
-        /// name suffix.
-        /// </summary>
-        /// <param name="source">The type to perform the operation on.</param>
-        /// <returns>True if the class is a test class; otherwise returns false.</returns>
-        public static bool IsTestClass(this Type source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            var typeInfo = source.GetTypeInfo();
-
-            return typeInfo.IsClass && (typeInfo.Name.EndsWith("Tests") || typeInfo.Name.EndsWith("Test"));
-        }
-
-        /// <summary>
         /// Indicates if a type is in a particular namespace hierarchy.
         /// </summary>
         /// <param name="source">The type to perform the operation on.</param>
         /// <param name="namespace">The namespace.</param>
-        /// <returns>True if the type is in the namespace hierarchy; otherwise returns false.</returns>
+        /// <returns>True if the type is in the namespace hierarchy; otherwise false.</returns>
         public static bool IsInNamespace(this Type source, string @namespace)
         {
             if (source == null)
@@ -54,6 +38,38 @@ namespace ByteDev.Reflection
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Indicates if a type can be set to null.
+        /// </summary>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <returns>True the type can be set to null; otherwise false.</returns>
+        public static bool IsNullable(this Type source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (!source.IsValueType)
+                return true;
+
+            return Nullable.GetUnderlyingType(source) != null;
+        }
+
+        /// <summary>
+        /// Indicates if a type is a test class. Determined by the class's
+        /// name suffix.
+        /// </summary>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <returns>True if the class is a test class; otherwise false.</returns>
+        public static bool IsTestClass(this Type source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            var typeInfo = source.GetTypeInfo();
+
+            return typeInfo.IsClass && (typeInfo.Name.EndsWith("Tests") || typeInfo.Name.EndsWith("Test"));
         }
     }
 }

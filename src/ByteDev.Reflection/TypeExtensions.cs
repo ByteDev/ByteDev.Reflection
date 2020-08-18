@@ -11,70 +11,28 @@ namespace ByteDev.Reflection
     public static class TypeExtensions
     {
         /// <summary>
-        /// Determines whether type has attribute applied.
+        /// Retrieves the type's base types.
         /// </summary>
-        /// <typeparam name="TAttribute">Type of attribute to check for.</typeparam>
         /// <param name="source">The type to perform the operation on.</param>
-        /// <returns>True if <paramref name="source" /> has the attribute <typeparamref name="TAttribute" />; otherwise returns false.</returns>
+        /// <returns>Collection of type's base types ending with System.Object.</returns>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
-        public static bool HasAttribute<TAttribute>(this Type source) where TAttribute : Attribute
+        public static IList<Type> GetBaseTypes(this Type source)
         {
-            if (source == null)
+            if(source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            return source.GetAttribute<TAttribute>() != null;
-        }
+            var list = new List<Type>();
 
-        /// <summary>
-        /// Retrieves a type's property regardless of its access modifier.
-        /// </summary>
-        /// <param name="source">The type to perform the operation on.</param>
-        /// <param name="propertyName">Property name.</param>
-        /// <param name="ignoreCase">Ignore the case of the property.</param>
-        /// <returns>PropertyInfo if it exists; otherwise throws exception.</returns>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
-        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
-        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
-        public static PropertyInfo GetPropertyOrThrow(this Type source, string propertyName, bool ignoreCase = false)
-        {
-            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+            var baseType = source.GetTypeInfo().BaseType;
 
-            return PropertyInfoHelper.GetPropertyInfoOrThrow(source, propertyName, ignoreCase, flags);
-        }
+            while (baseType != null)
+            {
+                list.Add(baseType);
 
-        /// <summary>
-        /// Retrieves a type's static property.
-        /// </summary>
-        /// <param name="source">The type to perform the operation on.</param>
-        /// <param name="propertyName">Property name.</param>
-        /// <param name="ignoreCase">Ignore the case of the property.</param>
-        /// <returns>PropertyInfo if it exists; otherwise throws exception.</returns>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
-        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
-        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
-        public static PropertyInfo GetStaticPropertyOrThrow(this Type source, string propertyName, bool ignoreCase = false)
-        {
-            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+                baseType = baseType.GetTypeInfo().BaseType;
+            }
 
-            return PropertyInfoHelper.GetPropertyInfoOrThrow(source, propertyName, ignoreCase, flags);
-        }
-
-        /// <summary>
-        /// Retrieves a type's static property value using reflection.
-        /// </summary>
-        /// <typeparam name="TValue">Type of value to return.</typeparam>
-        /// <param name="source">The type to perform the operation on.</param>
-        /// <param name="propertyName">Property name.</param>
-        /// <param name="ignoreCase">Ignore the case of the property.</param>
-        /// <returns>Property value for the corresponding property name.</returns>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
-        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
-        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
-        public static TValue GetStaticPropertyValue<TValue>(this Type source, string propertyName, bool ignoreCase = false)
-        {
-            var pi = GetStaticPropertyOrThrow(source, propertyName, ignoreCase);
-
-            return (TValue)pi.GetValue(null, null);
+            return list;
         }
 
         /// <summary>
@@ -113,46 +71,39 @@ namespace ByteDev.Reflection
         }
 
         /// <summary>
-        /// Retrieves the type's base types.
+        /// Retrieves all the enum properties on the type.
         /// </summary>
         /// <param name="source">The type to perform the operation on.</param>
-        /// <returns>Collection of type's base types ending with System.Object.</returns>
+        /// <returns>Collection of properties of enum type.</returns>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
-        public static IList<Type> GetBaseTypes(this Type source)
-        {
-            if(source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            var list = new List<Type>();
-
-            var baseType = source.GetTypeInfo().BaseType;
-
-            while (baseType != null)
-            {
-                list.Add(baseType);
-
-                baseType = baseType.GetTypeInfo().BaseType;
-            }
-
-            return list;
-        }
-
-        /// <summary>
-        /// Retrieves the type's implemented interfaces.
-        /// </summary>
-        /// <param name="source">The type to perform the operation on.</param>
-        /// <returns>Collection of type's implemented interfaces.</returns>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
-        public static IEnumerable<Type> GetImplementedInterfaces(this Type source)
+        public static IEnumerable<PropertyInfo> GetEnumProperties(this Type source)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            return source.GetTypeInfo().ImplementedInterfaces;
+            return source
+                .GetProperties()
+                .Where(pi => pi.PropertyType.IsEnum);
+        }
+        
+        /// <summary>
+        /// Retrieves a type's property regardless of its access modifier.
+        /// </summary>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="ignoreCase">Ignore the case of the property.</param>
+        /// <returns>PropertyInfo if it exists; otherwise throws exception.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
+        public static PropertyInfo GetPropertyOrThrow(this Type source, string propertyName, bool ignoreCase = false)
+        {
+            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+            return PropertyInfoHelper.GetPropertyInfoOrThrow(source, propertyName, ignoreCase, flags);
         }
 
-
-        /// <summary>
+                /// <summary>
         /// Retrieves all the properties on the type that have a certain attribute.
         /// </summary>
         /// <typeparam name="TAttribute">Property attribute.</typeparam>
@@ -181,23 +132,7 @@ namespace ByteDev.Reflection
 
             return properties.Where(pi => pi.GetCustomAttributes(typeof(TAttribute), false).Length > 0);
         }
-
-        /// <summary>
-        /// Retrieves all the enum properties on the type.
-        /// </summary>
-        /// <param name="source">The type to perform the operation on.</param>
-        /// <returns>Collection of properties of enum type.</returns>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
-        public static IEnumerable<PropertyInfo> GetEnumProperties(this Type source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            return source
-                .GetProperties()
-                .Where(pi => pi.PropertyType.IsEnum);
-        }
-
+        
         /// <summary>
         /// Retrieves all the properties on a type with a certain type.
         /// </summary>
@@ -216,21 +151,69 @@ namespace ByteDev.Reflection
         }
 
         /// <summary>
-        /// Indicates if a type can be set to null.
+        /// Retrieves the type's implemented interfaces.
         /// </summary>
         /// <param name="source">The type to perform the operation on.</param>
-        /// <returns>True the type can be set to null; otherwise returns false.</returns>
-        public static bool IsNullable(this Type source)
+        /// <returns>Collection of type's implemented interfaces.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        public static IEnumerable<Type> GetImplementedInterfaces(this Type source)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (!source.IsValueType)
-                return true;
-
-            return Nullable.GetUnderlyingType(source) != null;
+            return source.GetTypeInfo().ImplementedInterfaces;
         }
 
+        /// <summary>
+        /// Retrieves a type's static property.
+        /// </summary>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="ignoreCase">Ignore the case of the property.</param>
+        /// <returns>PropertyInfo if it exists; otherwise throws exception.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
+        public static PropertyInfo GetStaticPropertyOrThrow(this Type source, string propertyName, bool ignoreCase = false)
+        {
+            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+
+            return PropertyInfoHelper.GetPropertyInfoOrThrow(source, propertyName, ignoreCase, flags);
+        }
+
+        /// <summary>
+        /// Retrieves a type's static property value using reflection.
+        /// </summary>
+        /// <typeparam name="TValue">Type of value to return.</typeparam>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <param name="propertyName">Property name.</param>
+        /// <param name="ignoreCase">Ignore the case of the property.</param>
+        /// <returns>Property value for the corresponding property name.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        /// <exception cref="T:System.ArgumentException"><paramref name="propertyName" /> is null or empty.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Property does not exist.</exception>
+        public static TValue GetStaticPropertyValue<TValue>(this Type source, string propertyName, bool ignoreCase = false)
+        {
+            var pi = GetStaticPropertyOrThrow(source, propertyName, ignoreCase);
+
+            return (TValue)pi.GetValue(null, null);
+        }
+
+        /// <summary>
+        /// Determines whether type has attribute applied.
+        /// </summary>
+        /// <typeparam name="TAttribute">Type of attribute to check for.</typeparam>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <returns>True if <paramref name="source" /> has the attribute <typeparamref name="TAttribute" />; otherwise returns false.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        public static bool HasAttribute<TAttribute>(this Type source) where TAttribute : Attribute
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.GetAttribute<TAttribute>() != null;
+        }
+        
         internal static FieldInfo GetBackingField(this Type source, string propertyName)
         {
             if (source == null)

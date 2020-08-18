@@ -46,17 +46,17 @@ Object extensions:
 - SetPropertyValue
 
 Type extensions:
-- HasAttribute
+- GetBaseTypes
+- GetConstants
+- GetConstantsValues
+- GetEnumProperties
 - GetPropertyOrThrow
 - GetPropertiesWithAttribute
 - GetPropertiesOfType
-- GetEnumProperties
+- GetImplementedInterfaces
 - GetStaticPropertyOrThrow
 - GetStaticPropertyValue
-- GetConstants
-- GetConstantsValues
-- GetBaseTypes
-- GetImplementedInterfaces
+- HasAttribute
 - IsInNamespace
 - IsNullable
 - IsTestClass
