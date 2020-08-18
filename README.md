@@ -22,12 +22,6 @@ Releases follow semantic versioning.
 
 Full details of the release notes can be viewed on [GitHub](https://github.com/ByteDev/ByteDev.Reflection/blob/master/docs/RELEASE-NOTES.md).
 
-## Code
-
-The repo can be cloned from git bash:
-
-`git clone https://github.com/ByteDev/ByteDev.Reflection`
-
 ## Usage
 
 To use any extension methods or type simply reference the `ByteDev.Reflection` namespace.
