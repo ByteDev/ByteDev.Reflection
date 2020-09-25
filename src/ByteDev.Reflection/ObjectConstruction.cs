@@ -28,6 +28,8 @@ namespace ByteDev.Reflection
         /// <typeparam name="T">Type of object to initialize.</typeparam>
         /// <param name="parameters">Dictionary of parameters.</param>
         /// <returns>New instance of type <typeparamref name="T" />.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="parameters" /> is null.</exception>
+        /// <exception cref="T:System.InvalidOperationException">No matching constructor could be found.</exception>
         public static T ConstructNonPublic<T>(IDictionary<Type, object> parameters)
         {
             if (parameters == null)

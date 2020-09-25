@@ -24,6 +24,8 @@ Full details of the release notes can be viewed on [GitHub](https://github.com/B
 
 ### AssemblyEmbeddedResource
 
+Represents an assembly's embedded resource.
+
 ```csharp
 // Retrieve an assembly's embedded resource and save it to disk
 
@@ -35,25 +37,78 @@ AssemblyEmbeddedResource resource = AssemblyEmbeddedResource.CreateFromAssembly(
 resource.Save(Path.Combine(@"C:\Temp\", embeddedFile));
 ```
 
+### ObjectConstruction
+
+Initialize objects by calling their constructors using reflection.
+
+```csharp
+// Initialize with no params
+
+public class PrivateCtor
+{
+    private PrivateCtor()
+    {
+    }
+}
+
+// ...
+
+var test = ObjectConstruction.ConstructNonPublic<PrivateCtor>();
+```
+
+```csharp
+// Initialize with params
+
+public class InternalCtorWithParam
+{
+    public int Value { get; set; }
+
+    internal InternalCtorWithParam(int value)
+    {
+        Value = value;
+    }
+}
+
+// ...
+
+var parameters = new Dictionary<Type, object>
+{
+    {typeof(int), 10}
+};
+
+var test = ObjectConstruction.ConstructNonPublic<InternalCtorWithParam>(parameters);
+
+// test.Value == 10
+```
+
+---
+
 ### Extension Methods
 
-To use any extension methods or type simply reference the `ByteDev.Reflection` namespace.
+To use any extension methods simply reference the `ByteDev.Reflection` namespace.
 
-Assembly extensions:
+Assembly:
 - GetAssemblyAttribute
 - GetFileVersion
 - GetManifestResourceName
 - GetSubClasses
 - GetVersion
 
-Object extensions:
+Generic:
+- InvokeMethod
+
+MemberInfo:
+- GetAttribute
+- HasAttribute
+
+Object:
 - GetPropertyValue<T>
 - GetPropertyValue
 - GetPropertiesAsDictionary
 - SetPropertyReadOnlyValue
 - SetPropertyValue
 
-Type extensions:
+Type:
 - GetBaseTypes
 - GetConstants
 - GetConstantsValues
@@ -68,13 +123,3 @@ Type extensions:
 - IsInNamespace
 - IsNullable
 - IsTestClass
-
-MemberInfo extensions:
-- GetAttribute
-- HasAttribute
-
-Generic extensions:
-- InvokeMethod
-
-ObjectConstruction
-- ConstructNonPublic
