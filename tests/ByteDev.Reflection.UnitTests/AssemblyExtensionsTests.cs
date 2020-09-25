@@ -19,6 +19,16 @@ namespace ByteDev.Reflection.UnitTests
         }
 
         [TestFixture]
+        public class GetManifestResourceName : AssemblyExtensionsTests
+        {
+            [Test]
+            public void WhenAssemblyIsNull_ThenThrowException()
+            {
+                Assert.Throws<ArgumentNullException>(() => AssemblyExtensions.GetManifestResourceName(null, "SomeFile.txt"));
+            }
+        }
+
+        [TestFixture]
         public class GetVersion : AssemblyExtensionsTests
         {
             [Test]

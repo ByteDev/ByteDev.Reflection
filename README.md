@@ -4,11 +4,9 @@
 
 # ByteDev.Reflection
 
-Reflection related extension methods.
+Library of reflection related functionality and extension methods.
 
 ## Installation
-
-ByteDev.Reflection has been written as a .NET Standard 2.0 library, so you can consume it from a .NET Core or .NET Framework 4.6.1 (or greater) application.
 
 ByteDev.Reflection is hosted as a package on nuget.org.  To install from the Package Manager Console in Visual Studio run:
 
@@ -24,13 +22,29 @@ Full details of the release notes can be viewed on [GitHub](https://github.com/B
 
 ## Usage
 
+### AssemblyEmbeddedResource
+
+```csharp
+// Retrieve an assembly's embedded resource and save it to disk
+
+var assembly = Assembly.GetExecutingAssembly();
+var embeddedFile = "EmbeddedResource1.txt";
+
+AssemblyEmbeddedResource resource = AssemblyEmbeddedResource.CreateFromAssembly(assembly, embeddedFile);
+
+resource.Save(Path.Combine(@"C:\Temp\", embeddedFile));
+```
+
+### Extension Methods
+
 To use any extension methods or type simply reference the `ByteDev.Reflection` namespace.
 
 Assembly extensions:
-- GetVersion
-- GetFileVersion
-- GetSubClasses
 - GetAssemblyAttribute
+- GetFileVersion
+- GetManifestResourceName
+- GetSubClasses
+- GetVersion
 
 Object extensions:
 - GetPropertyValue<T>
@@ -56,8 +70,8 @@ Type extensions:
 - IsTestClass
 
 MemberInfo extensions:
-- HasAttribute
 - GetAttribute
+- HasAttribute
 
 Generic extensions:
 - InvokeMethod

@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="TestFiles\EmbeddedResource1.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="TestFiles\EmbeddedResource1.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ByteDev.Testing" Version="1.0.0" />
+    <PackageReference Include="ByteDev.Testing.NUnit" Version="1.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ByteDev.Reflection\ByteDev.Reflection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestFiles\ContentFile1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{19040C1B
 		build\ByteDev.Utilities.cake = build\ByteDev.Utilities.cake
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ByteDev.Reflection.IntTests", "tests\ByteDev.Reflection.IntTests\ByteDev.Reflection.IntTests.csproj", "{9D9BBC0B-B081-4CC9-8DD1-58F74535AA95}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,12 +38,17 @@ Global
 		{2E271ED3-B56E-4988-AA6E-147A1A362C66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E271ED3-B56E-4988-AA6E-147A1A362C66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E271ED3-B56E-4988-AA6E-147A1A362C66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D9BBC0B-B081-4CC9-8DD1-58F74535AA95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D9BBC0B-B081-4CC9-8DD1-58F74535AA95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D9BBC0B-B081-4CC9-8DD1-58F74535AA95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D9BBC0B-B081-4CC9-8DD1-58F74535AA95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2E271ED3-B56E-4988-AA6E-147A1A362C66} = {87CECBDA-3404-466B-9DFE-E188ADA470DD}
+		{9D9BBC0B-B081-4CC9-8DD1-58F74535AA95} = {87CECBDA-3404-466B-9DFE-E188ADA470DD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB6E0D93-7F52-4049-AE6E-3282797B82CE}

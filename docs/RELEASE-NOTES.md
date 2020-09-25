@@ -1,12 +1,24 @@
 # Release Notes
 
+## 2.2.0 - 25 September 2020
+
+Breaking changes:
+- (None)
+
+New features:
+- Added `AssemblyExtensions.GetManifestResourceName` method
+- Added `AssemblyEmbeddedResource` type
+
+Bug fixes / internal changes:
+- (None)
+
 ## 2.1.0 - 18 August 2020
 
 Breaking changes:
 - (None)
 
 New features:
-- Added TypeExtensions.GetPropertiesWithAttribute overload for BindingFlags
+- Added `TypeExtensions.GetPropertiesWithAttribute` overload for `BindingFlags`
 
 Bug fixes:
 - Package build changes
@@ -14,15 +26,15 @@ Bug fixes:
 ## 2.0.0 - 10 June 2020
 
 Breaking changes:
-- Removed ObjectExtensions.HasAttribute (use TypeExtensions.HasAttribute)
-- ObjectExtensions.SetValue is now SetPropertyValue
-- ObjectExtensions.SetReadOnlyProperty is now SetPropertyReadOnlyValue
-- ObjectExtensions.SetPropertyValue now tries to handle type conversion to property type if required
+- Removed `ObjectExtensions.HasAttribute`  (use `TypeExtensions.HasAttribute` instead)
+- Renamed `ObjectExtensions.SetValue` to `SetPropertyValue`
+- Renamed `ObjectExtensions.SetReadOnlyProperty` to `SetPropertyReadOnlyValue`
+- `ObjectExtensions.SetPropertyValue` now tries to handle type conversion to property type if required
 
 New features:
-- Added ObjectExtensions.GetPropertiesAsDictionary
-- Added ObjectExtensions.SetPropertyValue overload for PropertyInfo
-- Added TypeExtensions.IsNullable
+- Added `ObjectExtensions.GetPropertiesAsDictionary` method
+- Added `ObjectExtensions.SetPropertyValue` overload for `PropertyInfo`
+- Added `TypeExtensions.IsNullable` method
 
 Bug fixes:
 - (None)
@@ -33,10 +45,10 @@ Breaking changes:
 - (None)
 
 New features:
-- Added TypeExtensions.GetPropertiesWithAttribute
-- Added TypeExtensions.GetEnumProperties
-- Added TypeExtensions.GetPropertiesOfType
-- Added ObjectConstruction.ConstructNonPublic
+- Added `TypeExtensions.GetPropertiesWithAttribute` method
+- Added `TypeExtensions.GetEnumProperties` method
+- Added `TypeExtensions.GetPropertiesOfType` method
+- Added `ObjectConstruction.ConstructNonPublic` method
 
 Bug fixes:
 - (None)
