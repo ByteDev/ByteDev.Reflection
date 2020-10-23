@@ -1,4 +1,5 @@
 ﻿using System;
+using ByteDev.Reflection.UnitTests.TestTypes;
 using NUnit.Framework;
 
 namespace ByteDev.Reflection.UnitTests
@@ -121,6 +122,53 @@ namespace ByteDev.Reflection.UnitTests
                 var sut = typeof(NoNamespaceType);
 
                 var result = sut.IsInNamespace("ByteDev.Reflection.UnitTests");
+
+                Assert.That(result, Is.False);
+            }
+        }
+
+        [TestFixture]
+        public class IsNullable
+        {
+            [TestCase(typeof(TestClassAllTypes))]
+            [TestCase(typeof(object))]
+            [TestCase(typeof(string))]
+            [TestCase(typeof(bool?))]
+            [TestCase(typeof(char?))]
+            [TestCase(typeof(long?))]
+            [TestCase(typeof(int?))]
+            [TestCase(typeof(short?))]
+            [TestCase(typeof(byte?))]
+            [TestCase(typeof(decimal?))]
+            [TestCase(typeof(double?))]
+            [TestCase(typeof(float?))]
+            [TestCase(typeof(ulong?))]
+            [TestCase(typeof(uint?))]
+            [TestCase(typeof(ushort?))]
+            [TestCase(typeof(sbyte?))]
+            public void WhenTypeOf_AndIsNullable_ThenReturnTrue(Type sut)
+            {
+                var result = sut.IsNullable();
+
+                Assert.That(result, Is.True);
+            }
+
+            [TestCase(typeof(bool))]
+            [TestCase(typeof(char))]
+            [TestCase(typeof(long))]
+            [TestCase(typeof(int))]
+            [TestCase(typeof(short))]
+            [TestCase(typeof(byte))]
+            [TestCase(typeof(decimal))]
+            [TestCase(typeof(double))]
+            [TestCase(typeof(float))]
+            [TestCase(typeof(ulong))]
+            [TestCase(typeof(uint))]
+            [TestCase(typeof(ushort))]
+            [TestCase(typeof(sbyte))]
+            public void WhenTypeOf_AndIsNotNullable_ThenReturnFalse(Type sut)
+            {
+                var result = sut.IsNullable();
 
                 Assert.That(result, Is.False);
             }

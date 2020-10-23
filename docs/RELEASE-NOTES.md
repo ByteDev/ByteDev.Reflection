@@ -1,5 +1,16 @@
 # Release Notes
 
+## 2.3.0 - ??
+
+Breaking changes:
+- (None)
+
+New features:
+- Added `TypeExtensions.GetDefault`
+
+Bug fixes / internal changes:
+- (None)
+
 ## 2.2.0 - 25 September 2020
 
 Breaking changes:

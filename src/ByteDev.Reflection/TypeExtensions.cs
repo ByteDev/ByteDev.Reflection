@@ -213,6 +213,20 @@ namespace ByteDev.Reflection
 
             return source.GetAttribute<TAttribute>() != null;
         }
+
+        /// <summary>
+        /// Retrieves a type's default value.
+        /// </summary>
+        /// <param name="source">The type to perform the operation on.</param>
+        /// <returns>The type's default value.</returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is null.</exception>
+        public static object GetDefault(this Type source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.IsValueType ? Activator.CreateInstance(source) : null;
+        }
         
         internal static FieldInfo GetBackingField(this Type source, string propertyName)
         {

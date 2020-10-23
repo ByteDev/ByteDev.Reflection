@@ -499,49 +499,28 @@ namespace ByteDev.Reflection.UnitTests
         }
 
         [TestFixture]
-        public class IsNullable
+        public class GetDefault : TypeExtensionsTests
         {
-            [TestCase(typeof(TestClassAllTypes))]
-            [TestCase(typeof(object))]
-            [TestCase(typeof(string))]
-            [TestCase(typeof(bool?))]
-            [TestCase(typeof(char?))]
-            [TestCase(typeof(long?))]
-            [TestCase(typeof(int?))]
-            [TestCase(typeof(short?))]
-            [TestCase(typeof(byte?))]
-            [TestCase(typeof(decimal?))]
-            [TestCase(typeof(double?))]
-            [TestCase(typeof(float?))]
-            [TestCase(typeof(ulong?))]
-            [TestCase(typeof(uint?))]
-            [TestCase(typeof(ushort?))]
-            [TestCase(typeof(sbyte?))]
-            public void WhenTypeOf_AndIsNullable_ThenReturnTrue(Type sut)
+            [Test]
+            public void WhenIsNull_ThenThrowException()
             {
-                var result = sut.IsNullable();
-
-                Assert.That(result, Is.True);
+                Assert.Throws<ArgumentNullException>(() => TypeExtensions.GetDefault(null));
             }
 
-            [TestCase(typeof(bool))]
-            [TestCase(typeof(char))]
-            [TestCase(typeof(long))]
-            [TestCase(typeof(int))]
-            [TestCase(typeof(short))]
-            [TestCase(typeof(byte))]
-            [TestCase(typeof(decimal))]
-            [TestCase(typeof(double))]
-            [TestCase(typeof(float))]
-            [TestCase(typeof(ulong))]
-            [TestCase(typeof(uint))]
-            [TestCase(typeof(ushort))]
-            [TestCase(typeof(sbyte))]
-            public void WhenTypeOf_AndIsNotNullable_ThenReturnFalse(Type sut)
+            [Test]
+            public void WhenIsValueType_ThenReturnDefault()
             {
-                var result = sut.IsNullable();
+                var result = typeof(int).GetDefault();
 
-                Assert.That(result, Is.False);
+                Assert.That(result, Is.EqualTo(0));
+            }
+
+            [Test]
+            public void WhenIsRefType_ThenReturnNull()
+            {
+                var result = typeof(object).GetDefault();
+
+                Assert.That(result, Is.Null);
             }
         }
     }
