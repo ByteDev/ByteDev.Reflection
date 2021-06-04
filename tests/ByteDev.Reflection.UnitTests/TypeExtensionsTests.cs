@@ -508,19 +508,51 @@ namespace ByteDev.Reflection.UnitTests
             }
 
             [Test]
-            public void WhenIsValueType_ThenReturnDefault()
-            {
-                var result = typeof(int).GetDefault();
-
-                Assert.That(result, Is.EqualTo(0));
-            }
-
-            [Test]
             public void WhenIsRefType_ThenReturnNull()
             {
                 var result = typeof(object).GetDefault();
 
                 Assert.That(result, Is.Null);
+            }
+
+            [Test]
+            public void WhenIsNullableValueType_ThenReturnNull()
+            {
+                var result = typeof(int?).GetDefault();
+
+                Assert.That(result, Is.Null);
+            }
+
+            [TestCase(typeof(bool), false)]
+            [TestCase(typeof(int), 0)]
+            [TestCase(typeof(double), 0.0)]
+            [TestCase(typeof(char), '\0')]
+            [TestCase(typeof(TestEnum), (TestEnum)0)]
+            public void WhenIsValueType_ThenReturnDefault(Type sut, object expected)
+            {
+                var result = sut.GetDefault();
+
+                Assert.That(result, Is.EqualTo(expected));
+            }
+
+            [Test]
+            public void WhenIsStruct_ThenReturnDefault()
+            {
+                var result = (TestStruct)typeof(TestStruct).GetDefault();
+
+                Assert.That(result.Int, Is.EqualTo(0));
+                Assert.That(result.String, Is.Null);
+            }
+
+            internal enum TestEnum
+            {
+            }
+
+            internal struct TestStruct
+            {
+                public int Int { get; set; }
+
+                public string String { get; set; }
             }
         }
     }
