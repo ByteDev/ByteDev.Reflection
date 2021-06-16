@@ -429,6 +429,29 @@ namespace ByteDev.Reflection.UnitTests
                 Assert.That(_sut.SByte, Is.EqualTo(sbyte.MaxValue));
             }
 
+            [TestCase(2)]
+            [TestCase("Yellow")]
+            public void WhenTypeEnum_ThenSetProperty(object value)
+            {
+                _sut.SetPropertyValue(nameof(TestClassAllTypes.Enum), value);
+
+                Assert.That(_sut.Enum, Is.EqualTo(TrafficLights.Yellow));
+            }
+
+            [Test]
+            public void WhenTypeEnum_AndValueNotDefinedNumber_ThenSetDefault()
+            {
+                _sut.SetPropertyValue(nameof(TestClassAllTypes.Enum), 99);
+
+                Assert.That(_sut.Enum, Is.EqualTo((TrafficLights)99));
+            }
+
+            [Test]
+            public void WhenTypeEnum_AndValueNotDefinedName_ThenThrowException()
+            {
+                Assert.Throws<ArgumentException>(() => _sut.SetPropertyValue(nameof(TestClassAllTypes.Enum), "Purple"));
+            }
+
             [Test]
             public void WhenTypeUserDefinedObject_ThenSetProperty()
             {

@@ -34,6 +34,16 @@
         public sbyte SByte { get; set; }
 
 
+        public TrafficLights Enum { get; set;}
+
+
         public string ReadOnlyString { get; }
+    }
+
+    public enum TrafficLights
+    {
+        Red = 1,
+        Yellow = 2,
+        Green = 3
     }
 }

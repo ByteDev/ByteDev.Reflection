@@ -112,6 +112,7 @@ Type:
 - GetBaseTypes
 - GetConstants
 - GetConstantsValues
+- GetDefault
 - GetEnumProperties
 - GetPropertyOrThrow
 - GetPropertiesWithAttribute

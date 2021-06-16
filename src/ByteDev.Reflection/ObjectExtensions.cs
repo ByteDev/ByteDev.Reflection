@@ -157,47 +157,11 @@ namespace ByteDev.Reflection
             else if (pi.PropertyType == typeof(string))
                 pi.SetValue(source, value.ToString());
 
-            else if (pi.PropertyType == typeof(bool))
-                pi.SetValue(source, Convert.ToBoolean(value));
-
-            else if (pi.PropertyType == typeof(char))
-                pi.SetValue(source, Convert.ToChar(value));
-
-            else if (pi.PropertyType == typeof(long))
-                pi.SetValue(source, Convert.ToInt64(value));
-
-            else if (pi.PropertyType == typeof(int))
-                pi.SetValue(source, Convert.ToInt32(value));
-
-            else if (pi.PropertyType == typeof(short))
-                pi.SetValue(source, Convert.ToInt16(value));
-
-            else if (pi.PropertyType == typeof(byte))
-                pi.SetValue(source, Convert.ToByte(value));
-
-            else if (pi.PropertyType == typeof(decimal))
-                pi.SetValue(source, Convert.ToDecimal(value));
-
-            else if (pi.PropertyType == typeof(double))
-                pi.SetValue(source, Convert.ToDouble(value));
-
-            else if (pi.PropertyType == typeof(float))
-                pi.SetValue(source, Convert.ToSingle(value));
-            
-            else if (pi.PropertyType == typeof(ulong))
-                pi.SetValue(source, Convert.ToUInt64(value));
-
-            else if (pi.PropertyType == typeof(uint))
-                pi.SetValue(source, Convert.ToUInt32(value));  
-            
-            else if (pi.PropertyType == typeof(ushort))
-                pi.SetValue(source, Convert.ToUInt16(value));
-
-            else if (pi.PropertyType == typeof(sbyte))
-                pi.SetValue(source, Convert.ToSByte(value));
+            else if (pi.PropertyType.IsEnum)
+                pi.SetValue(source, Enum.Parse(pi.PropertyType, value.ToString()));
 
             else
-                pi.SetValue(source, value);
+                pi.SetValue(source, Convert.ChangeType(value, pi.PropertyType));
         }
     }
 }

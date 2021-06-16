@@ -1,5 +1,16 @@
 # Release Notes
 
+## 2.3.1 - 16 June 2021
+
+Breaking changes:
+- (None)
+
+New features:
+- (None)
+
+Bug fixes / internal changes:
+- `ObjectExtensions.SetPropertyValue` now handles enum type values as either name or number.
+
 ## 2.3.0 - 04 June 2021
 
 Breaking changes:
