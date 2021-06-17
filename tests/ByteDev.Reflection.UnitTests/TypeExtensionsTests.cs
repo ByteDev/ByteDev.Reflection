@@ -507,10 +507,11 @@ namespace ByteDev.Reflection.UnitTests
                 Assert.Throws<ArgumentNullException>(() => TypeExtensions.GetDefault(null));
             }
 
-            [Test]
-            public void WhenIsRefType_ThenReturnNull()
+            [TestCase(typeof(object))]
+            [TestCase(typeof(string))]
+            public void WhenIsRefType_ThenReturnNull(Type sut)
             {
-                var result = typeof(object).GetDefault();
+                var result = sut.GetDefault();
 
                 Assert.That(result, Is.Null);
             }
@@ -524,15 +525,44 @@ namespace ByteDev.Reflection.UnitTests
             }
 
             [TestCase(typeof(bool), false)]
-            [TestCase(typeof(int), 0)]
-            [TestCase(typeof(double), 0.0)]
             [TestCase(typeof(char), '\0')]
             [TestCase(typeof(TestEnum), (TestEnum)0)]
+
+            // Integral Numeric Types (IntPtr & UIntPtr tested below):
+            [TestCase(typeof(byte), 0)]
+            [TestCase(typeof(sbyte), 0)]
+            [TestCase(typeof(short), 0)]
+            [TestCase(typeof(ushort), 0)]
+            [TestCase(typeof(int), 0)]
+            [TestCase(typeof(uint), 0)]
+            [TestCase(typeof(long), 0)]
+            [TestCase(typeof(ulong), 0)]
+
+            // Floating Point Numeric Types:
+            [TestCase(typeof(float), 0)]
+            [TestCase(typeof(double), 0)]
+            [TestCase(typeof(decimal), 0)]
             public void WhenIsValueType_ThenReturnDefault(Type sut, object expected)
             {
                 var result = sut.GetDefault();
 
                 Assert.That(result, Is.EqualTo(expected));
+            }
+
+            [Test]
+            public void WhenIsValueTypeIntPtr_ThenReturnDefault()
+            {
+                var result = typeof(IntPtr).GetDefault();
+
+                Assert.That(result, Is.EqualTo((IntPtr)0));
+            }
+
+            [Test]
+            public void WhenIsValueTypeUIntPtr_ThenReturnDefault()
+            {
+                var result = typeof(UIntPtr).GetDefault();
+
+                Assert.That(result, Is.EqualTo((UIntPtr)0));
             }
 
             [Test]
