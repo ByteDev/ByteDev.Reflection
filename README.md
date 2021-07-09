@@ -37,6 +37,8 @@ AssemblyEmbeddedResource resource = AssemblyEmbeddedResource.CreateFromAssembly(
 resource.Save(Path.Combine(@"C:\Temp\", embeddedFile));
 ```
 
+---
+
 ### ObjectConstruction
 
 Initialize objects by calling their constructors using reflection.
